@@ -1,11 +1,19 @@
 package com.mock_test.back.reading.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
-@Data
+import java.util.Objects;
+
+@Getter
+@Setter
+@ToString
+@Builder
 @Entity
+@RequiredArgsConstructor
 @Table(name = "question")
+@AllArgsConstructor
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,6 +21,9 @@ public class Question {
 
     @Column(name = "article_id", nullable = false)
     private Integer articleId;
+
+    @Column(name = "sequence")
+    private Integer sequence;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
@@ -27,7 +38,26 @@ public class Question {
     @Column(name = "correctness")
     private Boolean correctness;
 
+    @Column(name = "correct_answer")
+    private String correctAnswer;
+
     public static enum Type {
-        SELECTION, CHECKBOX, SENTENCE, INSERTION, DRAG
+        SELECTION, VOCABULARY, MULTIPLE_CHOICE, SENTENCE, INSERTION, DRAG
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Question question = (Question) o;
+        return getId() != null && Objects.equals(getId(), question.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }

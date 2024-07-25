@@ -1,3 +1,4 @@
+// Header.tsx
 import React from "react";
 import { Disclosure } from "@headlessui/react";
 import {
@@ -25,7 +26,12 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header() {
+interface HeaderProps {
+  onNext: () => void; // Callback function for Next button
+  onBack: () => void; // Callback function for Back button
+}
+
+export default function Header({ onNext, onBack }: HeaderProps) {
   return (
     <Disclosure as="nav" className="bg-[#0d6b6e]">
       <div className="mx-auto max-w-full px-2">
@@ -44,8 +50,9 @@ export default function Header() {
               <button
                 key={button.name}
                 type="button"
+                onClick={button.name === "Next" ? onNext : button.name === "Back" ? onBack : undefined} // Call onBack for Back button and onNext for Next button
                 className={classNames(
-                  `relative flex items-center rounded-full border-2 border-white px-4 py-2`,
+                  `relative flex items-center rounded-full border-2 border-white px-4 py-2 font-bold`,
                   button.backgroundColor ? "bg-white" : "bg-[#0D6B6E]",
                   button.textColor || "text-gray-300",
                   "hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#027f80]"
@@ -61,13 +68,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-
-      {/* If you need mobile menu items, you can include them here */}
-      {/* <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
-          Add mobile menu items here if needed
-        </div>
-      </DisclosurePanel> */}
     </Disclosure>
   );
 }

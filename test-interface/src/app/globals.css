@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 * {
-  font-family: 'Open Sans,sans-serif';
+  /* font-family: 'Open Sans,sans-serif'; */
+  font-family: 'Dotum', sans-serif;
+  font-weight: 300;
+  /* letter-spacing: 0.1em; */
+  /* 90% character spacing */
 }
 
 :root {
@@ -34,17 +38,26 @@ body {
 }
 
 .custom-select {
-  background-color: #f8f9fa; /* Light gray background for the select box */
-  border: 1px solid #ced4da; /* Border color */
-  border-radius: 0.25rem; /* Rounded corners */
-  padding: 0.375rem 0.75rem; /* Padding */
-  font-size: 1rem; /* Font size */
-  color: #495057; /* Text color */
-  cursor: pointer; /* Cursor style */
+  background-color: #f8f9fa;
+  /* Light gray background for the select box */
+  border: 1px solid #ced4da;
+  /* Border color */
+  border-radius: 0.25rem;
+  /* Rounded corners */
+  padding: 0.375rem 0.75rem;
+  /* Padding */
+  font-size: 1rem;
+  /* Font size */
+  color: #495057;
+  /* Text color */
+  cursor: pointer;
+  /* Cursor style */
 }
 
 /* Style the selected option */
 .custom-select option:checked {
-  color: #fff; /* Text color of the selected option */
-  background-color: #0D6B6E; /* Background color of the selected option */
+  color: #fff;
+  /* Text color of the selected option */
+  background-color: #0D6B6E;
+  /* Background color of the selected option */
 }

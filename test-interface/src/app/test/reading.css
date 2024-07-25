@@ -1,43 +1,75 @@
-/* Hide the default radio button */
-.hidden {
-    display: none;
-  }
-  
-  /* Custom radio button styles */
-  .custom-radio {
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding-left: 30px;
-    cursor: pointer;
-    user-select: none;
-  }
-  
-  .custom-radio .radio-checkmark {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 20px;
-    width: 20px;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    background-color: #fff;
-  }
-  
-  /* Style for the selected radio button */
-  input:checked + .custom-radio .radio-checkmark {
-    background-color: #0D6B6E;
-    border-color: #0D6B6E;
-  }
-  
-  /* Style for the label text */
-  .custom-radio span {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #fff;
-    border: 2px solid #ccc;
-    margin-right: 10px;
-  }
+/* Add margin between the two boxes */
+.reading-container {
+  display: flex;
+  height: calc(100vh - 64px);
+  padding: 1rem;
+  gap: 1rem;
+  /* Add margin between the boxes */
+}
+
+/* Other CSS remains the same */
+input[type="radio"].hidden {
+  display: none;
+}
+
+.custom-radio {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  padding-left: 30px;
+}
+
+.custom-radio .radio-checkmark {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  border: 2px solid #0D6B6E;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.custom-radio .radio-checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0D6B6E;
+}
+
+input[type="radio"].hidden:checked+.custom-radio .radio-checkmark::after {
+  display: block;
+}
+
+.question-container {
+  padding: 1rem;
+}
+
+.paragraph-container {
+  border-left: 3px solid transparent;
+  /* Default: hidden */
+  padding-left: 10px;
+}
+
+.show-line {
+  border-left: 3px solid #0D6B6E;
+  /* Show the line only for the current paragraph */
+}
+
+.paragraph-container p {
+  margin: 0;
+}
+
+.paragraph-line {
+  border-left: 3px solid #0D6B6E;
+  padding-left: 10px;
+}
