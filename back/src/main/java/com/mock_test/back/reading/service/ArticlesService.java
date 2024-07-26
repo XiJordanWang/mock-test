@@ -1,9 +1,12 @@
 package com.mock_test.back.reading.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mock_test.back.reading.dto.AddReadingDTO;
+import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.dto.ReadingDTO;
 import com.mock_test.back.reading.model.Article;
 import com.mock_test.back.reading.model.Question;
+import com.mock_test.back.reading.model.ReadingTest;
 import com.mock_test.back.reading.model.Selection;
 import com.mock_test.back.reading.repository.ArticlesRepository;
 import com.mock_test.back.reading.repository.QuestionRepository;
@@ -12,14 +15,17 @@ import com.mock_test.back.redis.service.RedisHashService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ArticlesService {
@@ -36,13 +42,80 @@ public class ArticlesService {
     @Autowired
     RedisHashService redisHashService;
 
-    public String startReadingTest() {
-        return redisHashService.createReadingTest();
+    public ReadingTest startReadingTest() {
+        ReadingTest result = redisHashService.get();
+        if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
+            List<Article> articles = articlesRepository.findByIsDoneFalse();
+            AtomicInteger index = new AtomicInteger(0);
+            List<QuestionDTO> list = articles.stream().flatMap(item -> {
+                List<Question> questions = questionRepository.findByArticleIdOrderBySequenceAsc(item.getId());
+                return questions.stream().map(question -> {
+                    int currentIndex = index.incrementAndGet();
+                    return QuestionDTO.builder()
+                            .articleId(item.getId())
+                            .questionId(question.getId())
+                            .question(question.getQuestion())
+                            .index(currentIndex)
+                            .build();
+                });
+            }).toList();
+            return redisHashService.createReadingTest(list);
+        }
+        this.resetRemainTime(result);
+        redisHashService.saveOrUpdate(result);
+        return result;
+    }
+
+    public ReadingTest next(Integer index, Integer option) {
+        ReadingTest result = redisHashService.get();
+        if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
+            return null;
+        }
+        int nextIndex = index + 1;
+        result.setIndex(nextIndex);
+        result.setCurrentArticleId(result.getQuestions()
+                .stream()
+                .filter(item -> item.getIndex() == nextIndex)
+                .findFirst()
+                .orElseThrow()
+                .getArticleId());
+        result.getQuestions().stream()
+                .filter(item -> Objects.equals(item.getIndex(), index))
+                .findFirst()
+                .ifPresent(question -> {
+                    if (option != 0) {
+                        question.setMySelection(option);
+                        question.setSelected(true);
+                    }
+                });
+        this.resetRemainTime(result);
+        redisHashService.saveOrUpdate(result);
+        return result;
+    }
+
+    public ReadingTest back(Integer index) {
+        ReadingTest result = redisHashService.get();
+        if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
+            return null;
+        }
+        int preIndex = index - 1;
+        result.setIndex(preIndex);
+        result.setCurrentArticleId(result.getQuestions()
+                .stream()
+                .filter(item -> item.getIndex() == preIndex)
+                .findFirst()
+                .orElseThrow()
+                .getArticleId());
+        this.resetRemainTime(result);
+        redisHashService.saveOrUpdate(result);
+        return result;
     }
 
 
     public ReadingDTO getQuestion(Integer id, Integer questionNum) {
-        int index = questionNum - 10 > 0 ? questionNum - 10 : questionNum;
+        List<ReadingTest.QuestionDetail> questions = redisHashService.get().getQuestions();
+
+        int index = questionNum - 10 > 0 ? questionNum - 11 : questionNum - 1;
         Article article = articlesRepository.getReferenceById(id);
         Question question = questionRepository.findByArticleIdOrderBySequenceAsc(article.getId()).get(index);
         List<Selection> selections = selectionRepository.findByQuestionId(question.getId());
@@ -56,6 +129,7 @@ public class ArticlesService {
                 .id(article.getId())
                 .heading(article.getHeading())
                 .context(article.getContext())
+                .questionId(question.getId())
                 .paragraphNum(question.getParagraphNum())
                 .question(question.getQuestion())
                 .type(question.getType())
@@ -68,6 +142,7 @@ public class ArticlesService {
         Article article = articlesRepository.save(Article.builder()
                 .heading(dto.getHeading())
                 .context(dto.getContext())
+                .isDone(false)
                 .build());
 
         List<Selection> selections = new ArrayList<>();
@@ -82,6 +157,7 @@ public class ArticlesService {
                     .question(StringUtils.capitalize(questionDTO.getQuestion()))
                     .sequence(questionDTO.getSequence())
                     .type(this.checkQuestionType(questionDTO))
+                    .correctAnswer(questionDTO.getCorrectAnswer())
                     .build());
 
             questionDTO.getSelections().forEach(item -> {
@@ -131,5 +207,11 @@ public class ArticlesService {
             return matcher.group();
         }
         return null;
+    }
+
+    private void resetRemainTime(ReadingTest result) {
+        long remainTime = (36 * 60) - Duration.between(LocalDateTime.parse(result.getStartTime()),
+                LocalDateTime.now()).getSeconds();
+        result.setRemainTime(remainTime);
     }
 }

@@ -58,6 +58,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.4</version> <!-- 请根据需要选择合适的版本 -->
+		</dependency>
 	</dependencies>
 
 	<build>

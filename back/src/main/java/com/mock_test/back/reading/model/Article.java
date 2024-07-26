@@ -25,6 +25,9 @@ public class Article {
     @Column(name = "context", nullable = false, length = 5000)
     private String context;
 
+    @Column(name = "is_done", nullable = false)
+    private Boolean isDone;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

@@ -12,6 +12,7 @@ public class ReadingDTO {
     private Integer id;
     private String heading;
     private String context;
+    private Integer questionId;
     private Integer paragraphNum;
     private String question;
     private Question.Type type;

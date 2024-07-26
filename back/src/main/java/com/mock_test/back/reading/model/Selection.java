@@ -22,11 +22,11 @@ public class Selection {
     @Column(name = "question_id", nullable = false)
     private Integer questionId;
 
-    @Column(name = "question_sequence")
+    @Column(name = "question_sequence", nullable = false)
     private Integer questionSequence;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "option")
+    @Column(name = "option", nullable = false)
     private Option option;
 
     @Column(name = "information", nullable = false)

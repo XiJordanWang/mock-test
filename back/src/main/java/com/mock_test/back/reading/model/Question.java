@@ -22,7 +22,7 @@ public class Question {
     @Column(name = "article_id", nullable = false)
     private Integer articleId;
 
-    @Column(name = "sequence")
+    @Column(name = "sequence", nullable = false)
     private Integer sequence;
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +38,7 @@ public class Question {
     @Column(name = "correctness")
     private Boolean correctness;
 
-    @Column(name = "correct_answer")
+    @Column(name = "correct_answer", nullable = false)
     private String correctAnswer;
 
     public static enum Type {
