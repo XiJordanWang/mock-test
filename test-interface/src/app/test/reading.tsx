@@ -1,46 +1,38 @@
 "use client";
 
-// Reading.tsx
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axiosConfig";
 import Middle from "./middle";
 import "./reading.css"; // Ensure to import the CSS file
+import { ApiResponse, ReadingProps } from "./interface";
 
-interface Selection {
-  id: number;
-  information: string;
-}
-
-interface ApiResponse {
-  id: number;
-  heading: string;
-  context: string;
-  paragraphNum: number;
-  question: string;
-  type: string;
-  selections: Selection[];
-}
-
-interface ReadingProps {
-  questionNum: number;
-}
-
-export default function Reading({ questionNum }: ReadingProps) {
+export default function Reading({ testData, onOptionChange }: ReadingProps) {
+  // Destructure props
   const [data, setData] = useState<ApiResponse | null>(null);
+  const [mySelection, setMySelection] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get<ApiResponse>(`/reading/1/${questionNum}`);
-        console.log(response.data);
+      if (testData.index) {
+        const response = await axios.get<ApiResponse>(
+          `/reading/${testData.index}`
+        );
         setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data", error);
+        setMySelection(response.data.mySelection);
+        if (onOptionChange) {
+          onOptionChange(response.data.mySelection);
+        }
       }
     };
-
     fetchData();
-  }, [questionNum]); // Depend on questionNum to refetch data when it changes
+  }, [testData]); // Depend on testData.index to refetch data when it changes
+
+  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (onOptionChange) {
+      setMySelection(parseInt(event.target.value));
+      onOptionChange(parseInt(event.target.value));
+    }
+  };
 
   const processContent = (content: string, paragraphNum: number) => {
     // Create a DOM parser
@@ -59,22 +51,6 @@ export default function Reading({ questionNum }: ReadingProps) {
       }
     });
 
-    // Add background color to the word "periodically"
-    // const textNodes = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null);
-    // while (textNodes.nextNode()) {
-    //   const node = textNodes.currentNode as Text;
-    //   const word = "periodically";
-    //   if (node.nodeValue?.includes(word)) {
-    //     const span = doc.createElement("span");
-    //     span.style.backgroundColor = "#0D6B6E";
-    //     span.style.color = "white"; // Set text color to white
-    //     span.textContent = word;
-    //     const newTextNode = document.createTextNode(node.nodeValue.replace(word, ""));
-    //     node.parentNode?.replaceChild(newTextNode, node);
-    //     newTextNode.parentNode?.insertBefore(span, newTextNode.nextSibling);
-    //   }
-    // }
-
     // Return the updated HTML as a string
     return doc.body.innerHTML;
   };
@@ -85,7 +61,7 @@ export default function Reading({ questionNum }: ReadingProps) {
 
   return (
     <>
-      <Middle />
+      <Middle testData={testData} />
       <div className="flex h-[calc(100vh-64px)] p-4 gap-4">
         {" "}
         {/* Added gap-4 for margin between boxes */}
@@ -102,7 +78,9 @@ export default function Reading({ questionNum }: ReadingProps) {
               <div
                 className="article-content"
                 style={{ fontSize: "20px" }}
-                dangerouslySetInnerHTML={{ __html: processContent(data.context, data.paragraphNum) }}
+                dangerouslySetInnerHTML={{
+                  __html: processContent(data.context, data.paragraphNum),
+                }}
               />
             </div>
           </div>
@@ -120,6 +98,8 @@ export default function Reading({ questionNum }: ReadingProps) {
                     name="question"
                     value={selection.id}
                     className="hidden"
+                    checked={selection.id === mySelection}
+                    onChange={handleOptionChange}
                   />
                   <label
                     htmlFor={`option${selection.id}`}

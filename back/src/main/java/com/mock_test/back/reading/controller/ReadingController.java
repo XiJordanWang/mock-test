@@ -31,9 +31,9 @@ public class ReadingController {
         return articlesService.back(index);
     }
 
-    @GetMapping("/{id}/{questionNum}")
-    ReadingDTO getById(@PathVariable("id") Integer id, @PathVariable("questionNum") Integer questionNum) {
-        return articlesService.getQuestion(id, questionNum);
+    @GetMapping("/{questionNum}")
+    ReadingDTO getByQuestionNum(@PathVariable("questionNum") Integer questionNum) {
+        return articlesService.getByQuestionNum(questionNum);
     }
 
     @PostMapping("")

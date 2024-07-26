@@ -1,6 +1,5 @@
 package com.mock_test.back.reading.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mock_test.back.reading.dto.AddReadingDTO;
 import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.dto.ReadingDTO;
@@ -20,12 +19,12 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ArticlesService {
@@ -71,14 +70,6 @@ public class ArticlesService {
         if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
             return null;
         }
-        int nextIndex = index + 1;
-        result.setIndex(nextIndex);
-        result.setCurrentArticleId(result.getQuestions()
-                .stream()
-                .filter(item -> item.getIndex() == nextIndex)
-                .findFirst()
-                .orElseThrow()
-                .getArticleId());
         result.getQuestions().stream()
                 .filter(item -> Objects.equals(item.getIndex(), index))
                 .findFirst()
@@ -88,6 +79,14 @@ public class ArticlesService {
                         question.setSelected(true);
                     }
                 });
+        int nextIndex = index + 1;
+        result.setIndex(nextIndex);
+        result.setCurrentArticleId(result.getQuestions()
+                .stream()
+                .filter(item -> item.getIndex() == nextIndex)
+                .findFirst()
+                .orElseThrow()
+                .getArticleId());
         this.resetRemainTime(result);
         redisHashService.saveOrUpdate(result);
         return result;
@@ -112,29 +111,35 @@ public class ArticlesService {
     }
 
 
-    public ReadingDTO getQuestion(Integer id, Integer questionNum) {
-        List<ReadingTest.QuestionDetail> questions = redisHashService.get().getQuestions();
+    public ReadingDTO getByQuestionNum(Integer questionNum) {
+        ReadingTest.QuestionDetail questionDetail = redisHashService.get().getQuestions()
+                .stream()
+                .filter(item -> questionNum.equals(item.getIndex()))
+                .findFirst()
+                .orElse(null);
 
-        int index = questionNum - 10 > 0 ? questionNum - 11 : questionNum - 1;
-        Article article = articlesRepository.getReferenceById(id);
-        Question question = questionRepository.findByArticleIdOrderBySequenceAsc(article.getId()).get(index);
-        List<Selection> selections = selectionRepository.findByQuestionId(question.getId());
-        List<ReadingDTO.SelectionDTO> selectionDTOS = new ArrayList<>();
-        selections.forEach(item -> selectionDTOS.add(ReadingDTO.SelectionDTO.builder()
-                .id(item.getId())
-                .information(item.getInformation())
-                .build()));
-
-        return ReadingDTO.builder()
-                .id(article.getId())
-                .heading(article.getHeading())
-                .context(article.getContext())
-                .questionId(question.getId())
-                .paragraphNum(question.getParagraphNum())
-                .question(question.getQuestion())
-                .type(question.getType())
-                .selections(selectionDTOS)
-                .build();
+        if (questionDetail != null) {
+            Article article = articlesRepository.getReferenceById(questionDetail.getArticleId());
+            Question question = questionRepository.getReferenceById(questionDetail.getId());
+            List<Selection> selections = selectionRepository.findByQuestionId(question.getId());
+            List<ReadingDTO.SelectionDTO> selectionDTOS = new ArrayList<>();
+            selections.forEach(item -> selectionDTOS.add(ReadingDTO.SelectionDTO.builder()
+                    .id(item.getId())
+                    .information(item.getInformation())
+                    .build()));
+            return ReadingDTO.builder()
+                    .id(article.getId())
+                    .heading(article.getHeading())
+                    .context(article.getContext())
+                    .questionId(question.getId())
+                    .paragraphNum(question.getParagraphNum())
+                    .question(question.getQuestion())
+                    .type(question.getType())
+                    .mySelection(questionDetail.getMySelection())
+                    .selections(selectionDTOS)
+                    .build();
+        }
+        return null;
     }
 
     @Transactional

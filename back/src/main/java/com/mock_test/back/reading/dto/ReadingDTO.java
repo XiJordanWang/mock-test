@@ -16,6 +16,7 @@ public class ReadingDTO {
     private Integer paragraphNum;
     private String question;
     private Question.Type type;
+    private Integer mySelection;
     private List<SelectionDTO> selections;
 
     @Data

@@ -21,14 +21,10 @@ const buttons = [
     textColor: "text-[#027f80]",
   },
 ];
+import { HeaderProps } from "./interface";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
-}
-
-interface HeaderProps {
-  onNext: () => void; // Callback function for Next button
-  onBack: () => void; // Callback function for Back button
 }
 
 export default function Header({ onNext, onBack }: HeaderProps) {
@@ -50,7 +46,13 @@ export default function Header({ onNext, onBack }: HeaderProps) {
               <button
                 key={button.name}
                 type="button"
-                onClick={button.name === "Next" ? onNext : button.name === "Back" ? onBack : undefined} // Call onBack for Back button and onNext for Next button
+                onClick={
+                  button.name === "Next"
+                    ? onNext
+                    : button.name === "Back"
+                    ? onBack
+                    : undefined
+                } // Call onBack for Back button and onNext for Next button
                 className={classNames(
                   `relative flex items-center rounded-full border-2 border-white px-4 py-2 font-bold`,
                   button.backgroundColor ? "bg-white" : "bg-[#0D6B6E]",

@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { EyeIcon } from "@heroicons/react/24/outline";
+import { ReadingProps } from "./interface";
 
-export default function Middle() {
+export default function Middle({ testData }: ReadingProps) {
   // Initial countdown time in seconds (36 minutes)
-  const initialTime = 36 * 60;
+  const initialTime = testData.remainTime;
 
   // State to manage the countdown timer
   const [timeLeft, setTimeLeft] = useState(initialTime);
@@ -36,7 +37,9 @@ export default function Middle() {
       <div className="flex items-center space-x-4">
         <span className="font-bold text-gray-800">Reading</span>
         <span className="text-gray-600">|</span>
-        <span className="text-gray-600">Question 14 of 20</span>
+        <span className="text-gray-600">
+          Question {testData.index} of {testData.total}
+        </span>
       </div>
       <div className="flex items-center space-x-2 text-gray-600">
         {isTimeVisible && <span>{formatTime(timeLeft)}</span>}
