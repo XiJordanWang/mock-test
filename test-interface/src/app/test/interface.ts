@@ -1,3 +1,5 @@
+import { ComponentType, SVGProps } from "react";
+
 export interface ReadingTest {
   id: string;
   total: number;
@@ -14,6 +16,7 @@ export interface QuestionDetail {
   index: number;
   isSelected: boolean;
   mySelection: number;
+  myAnswer: string;
   question: string;
 }
 
@@ -40,7 +43,24 @@ export interface ReadingProps {
   onOptionChange?: (option: number) => void;
 }
 
+// interface.ts
 export interface HeaderProps {
-  onNext: () => void; // Callback function for Next button
-  onBack: () => void; // Callback function for Back button
+  onNext: () => void;
+  onBack: () => void;
+  onReview: () => void;
+  onReturn: () => void;
+  onBackToQuestion: () => void;
+  buttons: Button[];
+  isReview: boolean;
+}
+
+export interface Button {
+  name: string;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+export interface ReviewProps {
+  onSelectedQuestionIndex: (index: number) => void;
 }

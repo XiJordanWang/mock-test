@@ -21,6 +21,16 @@ public class ReadingController {
         return articlesService.startReadingTest();
     }
 
+    @GetMapping("/review")
+    ReadingTest review() {
+        return articlesService.review();
+    }
+
+    @GetMapping("/question/{index}")
+    ReadingTest backToQuestion(@PathVariable("index") Integer index) {
+        return articlesService.backToQuestion(index);
+    }
+
     @PutMapping("/next/{index}/{option}")
     ReadingTest next(@PathVariable("index") Integer index, @PathVariable("option") Integer option) {
         return articlesService.next(index, option);

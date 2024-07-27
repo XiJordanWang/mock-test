@@ -42,6 +42,8 @@ public class ReadingTest {
         private Integer articleId;
         @JsonProperty("mySelection")
         private Integer mySelection;
+        @JsonProperty("myAnswer")
+        private String myAnswer;
         @JsonProperty("isSelected")
         private boolean isSelected;
     }

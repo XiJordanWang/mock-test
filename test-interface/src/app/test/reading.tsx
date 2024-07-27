@@ -25,7 +25,7 @@ export default function Reading({ testData, onOptionChange }: ReadingProps) {
       }
     };
     fetchData();
-  }, [testData]); // Depend on testData.index to refetch data when it changes
+  }, [onOptionChange, testData]); // Depend on testData.index to refetch data when it changes
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (onOptionChange) {

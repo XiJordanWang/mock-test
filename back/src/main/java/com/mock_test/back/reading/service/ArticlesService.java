@@ -65,6 +65,21 @@ public class ArticlesService {
         return result;
     }
 
+    public ReadingTest review() {
+        ReadingTest result = redisHashService.get();
+        this.resetRemainTime(result);
+        redisHashService.saveOrUpdate(result);
+        return result;
+    }
+
+    public ReadingTest backToQuestion(Integer index) {
+        ReadingTest result = redisHashService.get();
+        result.setIndex(index);
+        this.resetRemainTime(result);
+        redisHashService.saveOrUpdate(result);
+        return result;
+    }
+
     public ReadingTest next(Integer index, Integer option) {
         ReadingTest result = redisHashService.get();
         if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
@@ -74,10 +89,16 @@ public class ArticlesService {
                 .filter(item -> Objects.equals(item.getIndex(), index))
                 .findFirst()
                 .ifPresent(question -> {
-                    if (option != 0) {
-                        question.setMySelection(option);
-                        question.setSelected(true);
+                    if (option == 0) {
+                        return;
                     }
+                    Selection selection = selectionRepository.findById(option).orElse(null);
+                    if (selection == null) {
+                        return;
+                    }
+                    question.setMySelection(option);
+                    question.setMyAnswer(selection.getOption().toString());
+                    question.setSelected(true);
                 });
         int nextIndex = index + 1;
         result.setIndex(nextIndex);

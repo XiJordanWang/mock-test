@@ -1,33 +1,20 @@
 // Header.tsx
 import React from "react";
 import { Disclosure } from "@headlessui/react";
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  SpeakerWaveIcon,
-  QuestionMarkCircleIcon,
-  BookmarkIcon,
-} from "@heroicons/react/24/outline";
-
-const buttons = [
-  { name: "Volume", icon: SpeakerWaveIcon },
-  { name: "Help", icon: QuestionMarkCircleIcon },
-  { name: "Review", icon: BookmarkIcon },
-  { name: "Back", icon: ArrowLeftIcon },
-  {
-    name: "Next",
-    icon: ArrowRightIcon,
-    backgroundColor: "white",
-    textColor: "text-[#027f80]",
-  },
-];
 import { HeaderProps } from "./interface";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header({ onNext, onBack }: HeaderProps) {
+export default function Header({
+  onNext,
+  onBack,
+  onReview,
+  onReturn,
+  onBackToQuestion,
+  buttons,
+}: HeaderProps) {
   return (
     <Disclosure as="nav" className="bg-[#0d6b6e]">
       <div className="mx-auto max-w-full px-2">
@@ -51,6 +38,12 @@ export default function Header({ onNext, onBack }: HeaderProps) {
                     ? onNext
                     : button.name === "Back"
                     ? onBack
+                    : button.name === "Review"
+                    ? onReview
+                    : button.name === "Return"
+                    ? onReturn
+                    : button.name === "Back To Question"
+                    ? onBackToQuestion
                     : undefined
                 } // Call onBack for Back button and onNext for Next button
                 className={classNames(
@@ -61,9 +54,10 @@ export default function Header({ onNext, onBack }: HeaderProps) {
                 )}
               >
                 <span className="sr-only">{button.name}</span>
-                {button.icon && (
-                  <button.icon aria-hidden="true" className="h-6 w-6 mr-2" />
-                )}
+                {React.createElement(button.icon, {
+                  "aria-hidden": true,
+                  className: "h-6 w-6 mr-2",
+                })}
                 {button.name}
               </button>
             ))}
