@@ -33,24 +33,24 @@ const Review = ({ onSelectedQuestionIndex }: ReviewProps) => {
         <table className="table-auto w-full border border-gray-300 rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-[#0D6B6E]">
-              <th className="border border-gray-300 p-2">Questions</th>
-              <th className="border border-gray-300 p-2">Your Answer</th>
+              <th className="border border-gray-300 p-2">Description</th>
+              <th className="border border-gray-300 p-2">Status</th>
             </tr>
           </thead>
           <tbody>
-            {testData?.questions.map((question, index) => (
+            {testData?.questions.map((question) => (
               <tr
-                key={index}
+                key={question.index}
                 className={`cursor-pointer ${
-                  selectedQuestionIndex === index ? "bg-[#0D6B6E]" : ""
+                  selectedQuestionIndex === question.index ? "bg-[#0D6B6E]" : ""
                 }`}
-                onClick={() => handleRowClick(index)}
+                onClick={() => handleRowClick(question.index)}
               >
                 <td className="border border-gray-300 p-2">
                   {question.index + ". " + question.question}
                 </td>
                 <td className="border border-gray-300 p-2">
-                  {question.isSelected ? question.myAnswer : "-"}
+                  {question.isSelected ? "Answered" : "-"}
                 </td>
               </tr>
             ))}

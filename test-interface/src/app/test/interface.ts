@@ -40,7 +40,7 @@ export interface Selection {
 
 export interface ReadingProps {
   testData: ReadingTest;
-  onOptionChange?: (option: number) => void;
+  onSubmit: () => void;
 }
 
 // interface.ts

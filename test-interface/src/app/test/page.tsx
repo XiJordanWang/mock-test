@@ -1,5 +1,7 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
 import Header from "./header";
 import Reading from "./reading";
 import axios from "../../api/axiosConfig";
@@ -13,10 +15,8 @@ import {
   BookmarkIcon,
 } from "@heroicons/react/24/outline";
 
-const nextQuestion = async (index: number, option: number) => {
-  const response = await axios.put<ReadingTest>(
-    `/reading/next/${index}/${option}`
-  );
+const nextQuestion = async (index: number) => {
+  const response = await axios.put<ReadingTest>(`/reading/next/${index}`);
   return response.data;
 };
 
@@ -28,6 +28,10 @@ const backQuestion = async (index: number) => {
 const backToQuestion = async (index: number) => {
   const response = await axios.get<ReadingTest>(`/reading/question/${index}`);
   return response.data;
+};
+
+const submit = async () => {
+  await axios.patch(`/reading`);
 };
 
 const readingButtons = [
@@ -55,23 +59,27 @@ const reviewButtons = [
 
 export default function Page() {
   const [testData, setTestData] = useState<ReadingTest | null>(null);
-  const [option, setOption] = useState<number | null>(null);
   const [isReview, setIsReview] = useState<boolean>(false);
-  const [buttons, setButtons] = useState<Button[]>([]);
-  const [questionNum, setQuestionNum] = useState<number>();
+  const [buttons, setButtons] = useState<Button[]>(readingButtons);
+  const [questionNum, setQuestionNum] = useState<number | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleNext = async () => {
     if (isReview) {
-      setIsReview(false); // Go to question
+      setIsReview(false);
     } else if (testData?.index) {
-      const test = await nextQuestion(testData.index, option ? option : 0);
-      setTestData(test);
+      if (testData.index === 20) {
+        setShowModal(true);
+      } else {
+        const test = await nextQuestion(testData.index);
+        setTestData(test);
+      }
     }
   };
 
   const handleBack = async () => {
     if (isReview) {
-      setIsReview(false); // Return from review
+      setIsReview(false);
     } else if (testData?.index) {
       if (testData.index - 1 === 0) {
         alert("You cannot go back any further.");
@@ -83,9 +91,11 @@ export default function Page() {
   };
 
   const handleBackToQuestion = async () => {
-    if (questionNum) {
-      const test = await backQuestion(questionNum);
+    if (questionNum !== null) {
+      const test = await backToQuestion(questionNum);
       setTestData(test);
+      setIsReview(false);
+      setButtons(readingButtons);
     }
   };
 
@@ -105,24 +115,26 @@ export default function Page() {
     }
   };
 
-  const onBackToQuestion = async () => {
-    setButtons(readingButtons);
-    setIsReview(false);
-    setButtons(readingButtons);
+  const handleConfirmFinish = async () => {
+    setShowModal(false);
+    await submit();
+  };
+
+  const handleCancelFinish = () => {
+    setShowModal(false);
+  };
+
+  const handleSubmit = async () => {
+    await submit();
   };
 
   useEffect(() => {
     const startReadingSession = async () => {
       const response = await axios.post<ReadingTest>("/reading/start");
       setTestData(response.data);
-      setButtons(readingButtons);
     };
     startReadingSession();
   }, []);
-
-  const handleOptionChange = (newOption: number) => {
-    setOption(newOption);
-  };
 
   return (
     <div className="h-screen overflow-hidden flex flex-col">
@@ -131,17 +143,34 @@ export default function Page() {
         onBack={handleBack}
         onReview={handleReview}
         onReturn={handleReturn}
-        onBackToQuestion={onBackToQuestion}
+        onBackToQuestion={handleBackToQuestion}
         isReview={isReview}
         buttons={buttons}
       />
       {isReview ? (
         <Review onSelectedQuestionIndex={onSelectedQuestionIndex} />
       ) : testData ? (
-        <Reading testData={testData} onOptionChange={handleOptionChange} />
+        <Reading testData={testData} onSubmit={handleSubmit} />
       ) : (
-        <div>Loading...</div> // Or some other placeholder while loading
+        <div>Loading...</div>
       )}
+      <Modal
+        isOpen={showModal}
+        onRequestClose={handleCancelFinish}
+        contentLabel="Confirm Finish Reading"
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <h2>Are you sure you want to finish the reading section?</h2>
+        <div className="modal-buttons">
+          <button onClick={handleConfirmFinish} className="btn-confirm">
+            Yes
+          </button>
+          <button onClick={handleCancelFinish} className="btn-cancel">
+            No
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

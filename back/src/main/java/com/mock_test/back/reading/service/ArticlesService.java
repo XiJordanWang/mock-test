@@ -80,26 +80,11 @@ public class ArticlesService {
         return result;
     }
 
-    public ReadingTest next(Integer index, Integer option) {
+    public ReadingTest next(Integer index) {
         ReadingTest result = redisHashService.get();
         if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
             return null;
         }
-        result.getQuestions().stream()
-                .filter(item -> Objects.equals(item.getIndex(), index))
-                .findFirst()
-                .ifPresent(question -> {
-                    if (option == 0) {
-                        return;
-                    }
-                    Selection selection = selectionRepository.findById(option).orElse(null);
-                    if (selection == null) {
-                        return;
-                    }
-                    question.setMySelection(option);
-                    question.setMyAnswer(selection.getOption().toString());
-                    question.setSelected(true);
-                });
         int nextIndex = index + 1;
         result.setIndex(nextIndex);
         result.setCurrentArticleId(result.getQuestions()
@@ -192,11 +177,49 @@ public class ArticlesService {
                         .questionId(question.getId())
                         .questionSequence(question.getSequence())
                         .option(item.getOption())
+                        .myAnswer(false)
                         .isCorrect(questionDTO.getCorrectAnswer().contains(item.getOption().toString()))
                         .build());
             });
         });
         selectionRepository.saveAll(selections);
+    }
+
+    @Transactional
+    public void submit() {
+        ReadingTest result = redisHashService.get();
+        List<Integer> ids = result.getQuestions().stream()
+                .map(ReadingTest.QuestionDetail::getMySelection)
+                .filter(Objects::nonNull)
+                .toList();
+        selectionRepository.updateMyAnswers(ids);
+        List<Selection> selections = selectionRepository.findByIdIn(ids);
+        List<Integer> list = selections.stream()
+                .filter(item -> item.getMyAnswer() && item.getIsCorrect())
+                .map(Selection::getId)
+                .toList();
+        questionRepository.updateCorrectnessInIds(list);
+        redisHashService.del();
+    }
+
+    public void select(Integer index, Integer option) {
+        ReadingTest result = redisHashService.get();
+        result.getQuestions().stream()
+                .filter(item -> Objects.equals(item.getIndex(), index))
+                .findFirst()
+                .ifPresent(question -> {
+                    if (option == 0) {
+                        return;
+                    }
+                    Selection selection = selectionRepository.findById(option).orElse(null);
+                    if (selection == null) {
+                        return;
+                    }
+                    question.setMySelection(option);
+                    question.setMyAnswer(selection.getOption().toString());
+                    question.setSelected(true);
+                });
+        redisHashService.saveOrUpdate(result);
     }
 
     private int getParagraphNum(int paragraphNum, AddReadingDTO.QuestionDTO questionDTO) {

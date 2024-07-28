@@ -4,7 +4,10 @@ import React, { useState, useEffect } from "react";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import { ReadingProps } from "./interface";
 
-export default function Middle({ testData }: ReadingProps) {
+export default function Middle({
+  testData,
+  onSubmit,
+}: ReadingProps) {
   // Initial countdown time in seconds (36 minutes)
   const initialTime = testData.remainTime;
 
@@ -14,10 +17,18 @@ export default function Middle({ testData }: ReadingProps) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+      setTimeLeft((prevTime) => {
+        if (prevTime > 0) {
+          return prevTime - 1;
+        } else {
+          clearInterval(timer);
+          onSubmit();
+          return 0;
+        }
+      });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [onSubmit]);
 
   // Format time into MM:SS
   const formatTime = (seconds: number) => {
@@ -32,6 +43,7 @@ export default function Middle({ testData }: ReadingProps) {
   const handleHideTime = () => {
     setIsTimeVisible((prevState) => !prevState);
   };
+
   return (
     <div className="flex items-center justify-between p-4">
       <div className="flex items-center space-x-4">

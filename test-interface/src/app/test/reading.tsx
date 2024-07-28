@@ -1,37 +1,49 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "../../api/axiosConfig";
 import Middle from "./middle";
 import "./reading.css"; // Ensure to import the CSS file
 import { ApiResponse, ReadingProps } from "./interface";
 
-export default function Reading({ testData, onOptionChange }: ReadingProps) {
+const select = async (index: number, option: number) => {
+  await axios.patch(`/reading/select/${index}/${option}`);
+};
+
+export default function Reading({ testData, onSubmit }: ReadingProps) {
   // Destructure props
   const [data, setData] = useState<ApiResponse | null>(null);
   const [mySelection, setMySelection] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (testData.index) {
-        const response = await axios.get<ApiResponse>(
-          `/reading/${testData.index}`
-        );
-        setData(response.data);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchData = useCallback(async () => {
+    if (testData.index) {
+      const response = await axios.get<ApiResponse>(
+        `/reading/${testData.index}`
+      );
+      setData(response.data);
+      if (response.data.mySelection && response.data.mySelection !== null) {
         setMySelection(response.data.mySelection);
-        if (onOptionChange) {
-          onOptionChange(response.data.mySelection);
-        }
       }
-    };
-    fetchData();
-  }, [onOptionChange, testData]); // Depend on testData.index to refetch data when it changes
-
-  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (onOptionChange) {
-      setMySelection(parseInt(event.target.value));
-      onOptionChange(parseInt(event.target.value));
     }
+  }, [testData.index]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    const focusedParagraph = document.getElementById("focused-paragraph");
+    if (focusedParagraph) {
+      focusedParagraph.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [data]);
+
+  const handleOptionChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setMySelection(parseInt(event.target.value));
+    await select(testData.index, parseInt(event.target.value));
   };
 
   const processContent = (content: string, paragraphNum: number) => {
@@ -46,6 +58,7 @@ export default function Reading({ testData, onOptionChange }: ReadingProps) {
       // Adjust class name based on paragraph number
       if (index + 1 === paragraphNum) {
         p.classList.add("paragraph-line");
+        p.setAttribute("id", "focused-paragraph");
       } else {
         p.classList.remove("paragraph-line");
       }
@@ -61,7 +74,7 @@ export default function Reading({ testData, onOptionChange }: ReadingProps) {
 
   return (
     <>
-      <Middle testData={testData} />
+      <Middle testData={testData} onSubmit={onSubmit} />
       <div className="flex h-[calc(100vh-64px)] p-4 gap-4">
         {" "}
         {/* Added gap-4 for margin between boxes */}
