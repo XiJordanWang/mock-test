@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -30,7 +30,7 @@ const submit = async () => {
 };
 
 export default function Page() {
-  const router = useRouter(); // Ensure `useRouter` is used inside a "use client" component
+  const router = useRouter(); // 使用 useRouter 进行客户端导航
   const [testData, setTestData] = useState<ReadingTest | null>(null);
   const [isReview, setIsReview] = useState<boolean>(false);
   const [buttons, setButtons] = useState<string>('Reading');
@@ -91,7 +91,7 @@ export default function Page() {
   const handleConfirmFinish = async () => {
     setShowModal(false);
     await submit();
-    router.push('/test/listening'); // Client-side navigation
+    router.push('/test/listening'); // 使用 router.push 进行客户端导航
   };
 
   const handleCancelFinish = () => {
@@ -100,7 +100,7 @@ export default function Page() {
 
   const handleSubmit = async () => {
     await submit();
-    router.push('/test/listening'); // Client-side navigation
+    router.push('/test/listening'); // 使用 router.push 进行客户端导航
   };
 
   useEffect(() => {
@@ -132,7 +132,6 @@ export default function Page() {
       ) : (
         <div>Loading...</div>
       )}
-      <ListeningSectionDirections />
       <Modal
         isOpen={showModal}
         onRequestClose={handleCancelFinish}
