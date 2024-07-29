@@ -34,6 +34,7 @@ public class RedisHashService {
         readingTest.setIndex(1);
         readingTest.setTotal(20);
         readingTest.setCurrentArticleId(list.get(0).getArticleId());
+        readingTest.setSequence(list.get(0).getSequence());
 
         // Convert QuestionDTO list to List<QuestionDetail>
         List<ReadingTest.QuestionDetail> questions = list.stream().map(item -> {

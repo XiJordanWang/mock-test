@@ -11,6 +11,7 @@ import com.mock_test.back.reading.repository.ArticlesRepository;
 import com.mock_test.back.reading.repository.QuestionRepository;
 import com.mock_test.back.reading.repository.SelectionRepository;
 import com.mock_test.back.redis.service.RedisHashService;
+import com.mock_test.back.util.ParseHTML;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +57,7 @@ public class ArticlesService {
                             .questionId(question.getId())
                             .question(question.getQuestion())
                             .index(currentIndex)
+                            .sequence(question.getSequence())
                             .build();
                 });
             }).toList();
@@ -143,6 +146,7 @@ public class ArticlesService {
                     .type(question.getType())
                     .mySelection(questionDetail.getMySelection())
                     .selections(selectionDTOS)
+                    .sequence(question.getSequence())
                     .build();
         }
         return null;
@@ -150,9 +154,11 @@ public class ArticlesService {
 
     @Transactional
     public void add(AddReadingDTO dto) {
+        AtomicReference<String> context = new AtomicReference<>(ParseHTML.formatTextToHtml(dto.getContext()));
+
         Article article = articlesRepository.save(Article.builder()
                 .heading(dto.getHeading())
-                .context(dto.getContext())
+                .context(context.get())
                 .isDone(false)
                 .build());
 
@@ -162,14 +168,19 @@ public class ArticlesService {
         dto.getQuestions().forEach(questionDTO -> {
             int currentParagraphNum = this.getParagraphNum(paragraphNum.get(), questionDTO);
             paragraphNum.set(currentParagraphNum);
-            Question question = questionRepository.save(Question.builder()
+
+            Question question = Question.builder()
                     .articleId(article.getId())
                     .paragraphNum(this.getParagraphNum(currentParagraphNum, questionDTO))
                     .question(StringUtils.capitalize(questionDTO.getQuestion()))
                     .sequence(questionDTO.getSequence())
                     .type(this.checkQuestionType(questionDTO))
                     .correctAnswer(questionDTO.getCorrectAnswer())
-                    .build());
+                    .build();
+
+            context.set(this.modifyDom(question, context.get()));
+
+            questionRepository.save(question);
 
             questionDTO.getSelections().forEach(item -> {
                 selections.add(Selection.builder()
@@ -183,6 +194,7 @@ public class ArticlesService {
             });
         });
         selectionRepository.saveAll(selections);
+        articlesRepository.updateContextById(context.get(), article.getId());
     }
 
     @Transactional
@@ -237,8 +249,14 @@ public class ArticlesService {
         if (questionDTO.getQuestion().contains("The word")) {
             type = Question.Type.VOCABULARY;
         }
+        if (questionDTO.getQuestion().contains("refer")) {
+            type = Question.Type.REFER;
+        }
         if (questionDTO.getQuestion().contains("TWO")) {
             type = Question.Type.MULTIPLE_CHOICE;
+        }
+        if (questionDTO.getQuestion().contains("Which of the sentences below")) {
+            type = Question.Type.SENTENCE;
         }
         if (questionDTO.getSequence() == 9) {
             type = Question.Type.INSERTION;
@@ -247,6 +265,19 @@ public class ArticlesService {
             type = Question.Type.DRAG;
         }
         return type;
+    }
+
+    private String modifyDom(Question question, String context) {
+        if (question.getType().equals(Question.Type.VOCABULARY)) {
+            return ParseHTML.recognizeVocabulary(context, ParseHTML.extractWord(question.getQuestion()), question.getSequence());
+        }
+        if (question.getType().equals(Question.Type.REFER)) {
+            return ParseHTML.recognizeRefer(context, ParseHTML.extractWord(question.getQuestion()), question.getSequence());
+        }
+        if (question.getType().equals(Question.Type.SENTENCE)) {
+            return ParseHTML.recognizeSentence(context, ParseHTML.extractWord(question.getQuestion()), question.getSequence());
+        }
+        return context;
     }
 
     private String getParagraphNumber(String input) {

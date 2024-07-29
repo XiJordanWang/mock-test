@@ -1,14 +1,13 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Modal from 'react-modal';
-import Header from '../header';
-import Reading from './reading';
-import axios from '../../../api/axiosConfig';
-import { ReadingTest } from '../interface';
-import Review from './review';
-import ListeningSectionDirections from '../listening/direction';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Modal from "react-modal";
+import Header from "../header";
+import Reading from "./reading";
+import axios from "../../../api/axiosConfig";
+import { ReadingTest } from "../interface";
+import Review from "./review";
 
 const nextQuestion = async (index: number) => {
   const response = await axios.put<ReadingTest>(`/reading/next/${index}`);
@@ -30,10 +29,10 @@ const submit = async () => {
 };
 
 export default function Page() {
-  const router = useRouter(); // 使用 useRouter 进行客户端导航
+  const router = useRouter();
   const [testData, setTestData] = useState<ReadingTest | null>(null);
   const [isReview, setIsReview] = useState<boolean>(false);
-  const [buttons, setButtons] = useState<string>('Reading');
+  const [buttons, setButtons] = useState<string>("Reading");
   const [questionNum, setQuestionNum] = useState<number | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -55,7 +54,7 @@ export default function Page() {
       setIsReview(false);
     } else if (testData?.index) {
       if (testData.index - 1 === 0) {
-        alert('You cannot go back any further.');
+        alert("You cannot go back any further.");
         return;
       }
       const test = await backQuestion(testData.index);
@@ -68,18 +67,18 @@ export default function Page() {
       const test = await backToQuestion(questionNum);
       setTestData(test);
       setIsReview(false);
-      setButtons('Reading');
+      setButtons("Reading");
     }
   };
 
   const handleReview = () => {
     setIsReview(true);
-    setButtons('Review');
+    setButtons("Review");
   };
 
   const handleReturn = () => {
     setIsReview(false);
-    setButtons('Reading');
+    setButtons("Reading");
   };
 
   const onSelectedQuestionIndex = (index: number) => {
@@ -91,7 +90,7 @@ export default function Page() {
   const handleConfirmFinish = async () => {
     setShowModal(false);
     await submit();
-    router.push('/test/listening'); // 使用 router.push 进行客户端导航
+    router.push("/test/listening"); // 使用 router.push 进行客户端导航
   };
 
   const handleCancelFinish = () => {
@@ -100,12 +99,12 @@ export default function Page() {
 
   const handleSubmit = async () => {
     await submit();
-    router.push('/test/listening'); // 使用 router.push 进行客户端导航
+    router.push("/test/listening"); // 使用 router.push 进行客户端导航
   };
 
   useEffect(() => {
     const startReadingSession = async () => {
-      const response = await axios.post<ReadingTest>('/reading/start');
+      const response = await axios.post<ReadingTest>("/reading/start");
       setTestData(response.data);
     };
     startReadingSession();

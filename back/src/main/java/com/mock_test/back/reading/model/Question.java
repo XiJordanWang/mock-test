@@ -42,7 +42,7 @@ public class Question {
     private String correctAnswer;
 
     public static enum Type {
-        SELECTION, VOCABULARY, MULTIPLE_CHOICE, SENTENCE, INSERTION, DRAG
+        SELECTION, VOCABULARY, MULTIPLE_CHOICE, REFER, SENTENCE, INSERTION, DRAG
     }
 
     @Override

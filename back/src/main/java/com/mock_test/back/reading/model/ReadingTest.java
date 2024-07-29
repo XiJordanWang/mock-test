@@ -28,6 +28,9 @@ public class ReadingTest {
 
     @JsonProperty("currentArticleId")
     private Integer currentArticleId;
+    
+    @JsonProperty("sequence")
+    private Integer sequence;
 
     @Data
     public static

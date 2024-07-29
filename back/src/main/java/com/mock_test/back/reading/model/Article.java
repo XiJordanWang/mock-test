@@ -22,7 +22,7 @@ public class Article {
     @Column(name = "heading", nullable = false)
     private String heading;
 
-    @Column(name = "context", nullable = false, length = 5000)
+    @Column(name = "context", nullable = false, length = 6000)
     private String context;
 
     @Column(name = "is_done", nullable = false)

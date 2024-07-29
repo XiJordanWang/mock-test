@@ -7,6 +7,8 @@ import com.mock_test.back.reading.service.ArticlesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/reading")
 public class ReadingController {
@@ -15,8 +17,8 @@ public class ReadingController {
     ArticlesService articlesService;
 
     @PostMapping
-    void add(@RequestBody AddReadingDTO dto) {
-        articlesService.add(dto);
+    void add(@RequestBody List<AddReadingDTO> dto) {
+        dto.forEach(item -> articlesService.add(item));
     }
 
     @PatchMapping

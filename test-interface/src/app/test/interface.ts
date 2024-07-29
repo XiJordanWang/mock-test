@@ -7,6 +7,8 @@ export interface ReadingTest {
   startTime: string;
   remainTime: number;
   currentArticleId: number;
+  type: string;
+  sequence: number;
   questions: Array<QuestionDetail>;
 }
 
@@ -29,6 +31,7 @@ export interface ApiResponse {
   question: string;
   type: string;
   mySelection: number;
+  sequence: number;
   selections: Selection[];
 }
 

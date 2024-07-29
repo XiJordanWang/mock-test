@@ -10,4 +10,5 @@ public class QuestionDTO {
     private Integer questionId;
     private Integer index;
     private String question;
+    private Integer sequence;
 }
