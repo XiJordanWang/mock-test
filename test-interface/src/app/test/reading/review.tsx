@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "../../api/axiosConfig";
-import { ReadingTest, ReviewProps } from "./interface";
-import Middle from "./middle";
+import axios from "../../../api/axiosConfig";
+import { ReadingTest, ReviewProps } from "../interface";
+import Middle from "../middle";
 
 const getReviewData = async () => {
   const response = await axios.get<ReadingTest>("/reading/review");

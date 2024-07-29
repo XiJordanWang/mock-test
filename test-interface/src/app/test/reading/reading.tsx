@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "../../api/axiosConfig";
-import Middle from "./middle";
+import axios from "../../../api/axiosConfig";
+import Middle from "../middle";
 import "./reading.css"; // Ensure to import the CSS file
-import { ApiResponse, ReadingProps } from "./interface";
+import { ApiResponse, ReadingProps } from "../interface";
 
 const select = async (index: number, option: number) => {
   await axios.patch(`/reading/select/${index}/${option}`);

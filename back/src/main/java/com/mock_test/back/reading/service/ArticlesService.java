@@ -261,6 +261,6 @@ public class ArticlesService {
     private void resetRemainTime(ReadingTest result) {
         long remainTime = (36 * 60) - Duration.between(LocalDateTime.parse(result.getStartTime()),
                 LocalDateTime.now()).getSeconds();
-        result.setRemainTime(3);
+        result.setRemainTime(remainTime);
     }
 }
