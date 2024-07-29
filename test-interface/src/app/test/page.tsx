@@ -7,13 +7,6 @@ import Reading from "./reading";
 import axios from "../../api/axiosConfig";
 import { ReadingTest, Button } from "./interface";
 import Review from "./review";
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  SpeakerWaveIcon,
-  QuestionMarkCircleIcon,
-  BookmarkIcon,
-} from "@heroicons/react/24/outline";
 
 const nextQuestion = async (index: number) => {
   const response = await axios.put<ReadingTest>(`/reading/next/${index}`);
@@ -34,33 +27,10 @@ const submit = async () => {
   await axios.patch(`/reading`);
 };
 
-const readingButtons = [
-  { name: "Volume", icon: SpeakerWaveIcon },
-  { name: "Help", icon: QuestionMarkCircleIcon },
-  { name: "Review", icon: BookmarkIcon },
-  { name: "Back", icon: ArrowLeftIcon },
-  {
-    name: "Next",
-    icon: ArrowRightIcon,
-    backgroundColor: "white",
-    textColor: "text-[#027f80]",
-  },
-];
-
-const reviewButtons = [
-  { name: "Return", icon: ArrowLeftIcon },
-  {
-    name: "Back To Question",
-    icon: ArrowRightIcon,
-    backgroundColor: "white",
-    textColor: "text-[#027f80]",
-  },
-];
-
 export default function Page() {
   const [testData, setTestData] = useState<ReadingTest | null>(null);
   const [isReview, setIsReview] = useState<boolean>(false);
-  const [buttons, setButtons] = useState<Button[]>(readingButtons);
+  const [buttons, setButtons] = useState<string>("Reading");
   const [questionNum, setQuestionNum] = useState<number | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -95,18 +65,18 @@ export default function Page() {
       const test = await backToQuestion(questionNum);
       setTestData(test);
       setIsReview(false);
-      setButtons(readingButtons);
+      setButtons("Reading");
     }
   };
 
   const handleReview = () => {
     setIsReview(true);
-    setButtons(reviewButtons);
+    setButtons("Review");
   };
 
   const handleReturn = () => {
     setIsReview(false);
-    setButtons(readingButtons);
+    setButtons("Reading");
   };
 
   const onSelectedQuestionIndex = (index: number) => {
@@ -148,7 +118,10 @@ export default function Page() {
         buttons={buttons}
       />
       {isReview ? (
-        <Review onSelectedQuestionIndex={onSelectedQuestionIndex} />
+        <Review
+          onSelectedQuestionIndex={onSelectedQuestionIndex}
+          onSubmit={handleSubmit}
+        />
       ) : testData ? (
         <Reading testData={testData} onSubmit={handleSubmit} />
       ) : (

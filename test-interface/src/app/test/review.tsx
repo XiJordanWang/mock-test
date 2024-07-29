@@ -9,7 +9,7 @@ const getReviewData = async () => {
   return response.data;
 };
 
-const Review = ({ onSelectedQuestionIndex }: ReviewProps) => {
+const Review = ({ onSelectedQuestionIndex, onSubmit }: ReviewProps) => {
   const [testData, setTestData] = useState<ReadingTest>();
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>();
 
@@ -28,7 +28,11 @@ const Review = ({ onSelectedQuestionIndex }: ReviewProps) => {
 
   return (
     <>
-      {testData ? <Middle testData={testData} /> : <div>loading...</div>}
+      {testData ? (
+        <Middle testData={testData} onSubmit={onSubmit} />
+      ) : (
+        <div>loading...</div>
+      )}
       <div className="ml-20 mr-20 mb-10 overflow-y-scroll">
         <table className="table-auto w-full border border-gray-300 rounded-lg overflow-hidden">
           <thead>

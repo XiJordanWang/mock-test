@@ -50,7 +50,7 @@ export interface HeaderProps {
   onReview: () => void;
   onReturn: () => void;
   onBackToQuestion: () => void;
-  buttons: Button[];
+  buttons: string;
   isReview: boolean;
 }
 
@@ -63,4 +63,5 @@ export interface Button {
 
 export interface ReviewProps {
   onSelectedQuestionIndex: (index: number) => void;
+  onSubmit: () => void;
 }
