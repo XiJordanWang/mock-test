@@ -116,19 +116,25 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
       setMySelection(newSelection);
       select(testData.index, newSelection);
     }
+    const span = document.createElement("span");
+    if (data) {
+      span.textContent = data?.question;
+    }
+    span.style.fontWeight = "bold";
     squares.forEach((item) => {
-      if (item === squareId) {
-        return;
-      }
       let square = document.getElementById(item);
       if (!square) {
         return;
       }
-      if (!square?.hasChildNodes()) {
+      if (item === squareId) {
+        if (square.innerHTML === "") {
+          square?.appendChild(span);
+          square.className = "inserted-sentence";
+        }
         return;
-      }
-      if (square.firstChild) {
-        square.firstChild.style.display = "none";
+      } else {
+        square.className = "square";
+        square.innerHTML = "";
       }
     });
   };
@@ -153,29 +159,7 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
         p.classList.remove("paragraph-line");
       }
     });
-    setInsertionQuestion(doc);
     return doc.body.innerHTML;
-  };
-
-  const setInsertionQuestion = (doc: Document) => {
-    if (currentSquare) {
-      const span = document.createElement("span");
-      if (data) {
-        span.textContent = data?.question;
-      }
-      span.style.fontWeight = "bold";
-      squares.forEach((item) => {
-        const squareElement = doc.querySelector("#" + item);
-        if (squareElement) {
-          if (item === currentSquare) {
-            squareElement?.appendChild(span);
-            squareElement.className = "inserted-sentence";
-          } else {
-            squareElement.className = "square";
-          }
-        }
-      });
-    }
   };
 
   if (!data) {
