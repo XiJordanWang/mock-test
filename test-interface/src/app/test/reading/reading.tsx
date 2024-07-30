@@ -127,7 +127,9 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
       if (!square?.hasChildNodes()) {
         return;
       }
-      square.firstChild.style.display = "none";
+      if (square.firstChild) {
+        square.firstChild.style.display = "none";
+      }
     });
   };
 
