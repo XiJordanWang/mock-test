@@ -1,9 +1,15 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import axios from "../../../api/axiosConfig";
 import Middle from "../middle";
-import "./reading.css"; // Ensure to import the CSS file
+import "./reading.css";
 import { ApiResponse, ReadingProps } from "../interface";
 import DragComponent from "./drag";
 import parse from "html-react-parser";
@@ -14,10 +20,31 @@ const select = async (index: number, option: number) => {
 
 const squares = ["square1", "square2", "square3", "square4"];
 
-export default function Reading({ testData, onSubmit }: ReadingProps) {
+const Reading = forwardRef((props: ReadingProps, ref) => {
+  const { testData, onSubmit } = props;
   const [data, setData] = useState<ApiResponse | null>(null);
   const [mySelection, setMySelection] = useState<number | null>(null);
-  const [currentSquare, setCurrentSquare] = useState<string | null>(null);
+  const [lastId, setLastId] = useState<string | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    resetReading,
+  }));
+
+  const resetReading = () => {
+    if (!lastId) return;
+    const selectedItem = document.getElementById(lastId);
+    if (selectedItem) {
+      selectedItem.className = "selected";
+    }
+    if (data?.type === "INSERTION") {
+      squares.forEach((item) => {
+        let element = document.getElementById(item);
+        if (element) {
+          element.className = "square-default";
+        }
+      });
+    }
+  };
 
   const fetchData = useCallback(async () => {
     if (testData.index) {
@@ -25,7 +52,7 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
         `/reading/${testData.index}`
       );
       setData(response.data);
-      if (response.data.mySelection && response.data.mySelection !== null) {
+      if (response.data.mySelection !== null) {
         setMySelection(response.data.mySelection);
       }
     }
@@ -37,12 +64,14 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
 
   useEffect(() => {
     if (!data) return;
+
     const focusedParagraph = document.getElementById("focused-paragraph");
     if (focusedParagraph) {
       focusedParagraph.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+
     let id: string;
-    switch (data?.type) {
+    switch (data.type) {
       case "VOCABULARY":
         id = "vocabulary" + data.sequence;
         break;
@@ -54,19 +83,16 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
         break;
       case "INSERTION":
         let index =
-          data?.selections.findIndex((item) => item.id === data?.mySelection) +
-          1;
+          data.selections.findIndex((item) => item.id === data.mySelection) + 1;
         squares.forEach((squareId) => {
           const squareElement = document.getElementById(squareId);
           if (squareElement) {
             const span = document.createElement("span");
-            if (data) {
-              span.textContent = data?.question;
-            }
+            span.textContent = data.question;
             span.style.fontWeight = "bold";
             if (squareId === "square" + index) {
               squareElement.innerHTML = "";
-              squareElement?.appendChild(span);
+              squareElement.appendChild(span);
               squareElement.className = "inserted-sentence";
             } else {
               squareElement.className = "square";
@@ -82,21 +108,16 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
     const checkAndApplyStyles = () => {
       const vocabularySpan = document.getElementById(id);
       if (vocabularySpan) {
-        vocabularySpan.style.setProperty(
-          "background-color",
-          "#0D6B6E",
-          "important"
-        );
-        vocabularySpan.style.setProperty("color", "#FFFFFF", "important");
+        vocabularySpan.className = "reading-selected";
       } else {
         setTimeout(checkAndApplyStyles, 100);
       }
     };
     checkAndApplyStyles();
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+    setLastId(id);
+  }, [data]);
 
   const handleSquareClick = (squareId: string) => {
-    setCurrentSquare(squareId);
     let newSelection: number | null = null;
     switch (squareId) {
       case "square1":
@@ -117,24 +138,20 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
       select(testData.index, newSelection);
     }
     const span = document.createElement("span");
-    if (data) {
-      span.textContent = data?.question;
-    }
+    span.textContent = data?.question || "";
     span.style.fontWeight = "bold";
     squares.forEach((item) => {
       let square = document.getElementById(item);
-      if (!square) {
-        return;
-      }
-      if (item === squareId) {
-        if (square.innerHTML === "") {
-          square?.appendChild(span);
-          square.className = "inserted-sentence";
+      if (square) {
+        if (item === squareId) {
+          if (square.innerHTML === "") {
+            square.appendChild(span);
+            square.className = "inserted-sentence";
+          }
+        } else {
+          square.className = "square";
+          square.innerHTML = "";
         }
-        return;
-      } else {
-        square.className = "square";
-        square.innerHTML = "";
       }
     });
   };
@@ -170,7 +187,7 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
     return (
       <>
         <Middle testData={testData} onSubmit={onSubmit} />
-        <DragComponent />
+        <DragComponent data={data} />
       </>
     );
   }
@@ -242,4 +259,6 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
       </div>
     </>
   );
-}
+});
+Reading.displayName = "Reading";
+export default Reading;

@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import Header from "../header";
 import Reading from "./reading";
 import axios from "../../../api/axiosConfig";
-import { ReadingTest } from "../interface";
+import { ReadingRef, ReadingTest } from "../interface";
 import Review from "./review";
 
 const nextQuestion = async (index: number) => {
@@ -29,12 +29,19 @@ const submit = async () => {
 };
 
 export default function Page() {
+  const readingRef = useRef<ReadingRef>();
   const router = useRouter();
   const [testData, setTestData] = useState<ReadingTest | null>(null);
   const [isReview, setIsReview] = useState<boolean>(false);
   const [buttons, setButtons] = useState<string>("Reading");
   const [questionNum, setQuestionNum] = useState<number | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
+
+  const resetStyle = () => {
+    if (readingRef.current) {
+      readingRef.current.resetReading();
+    }
+  };
 
   const handleNext = async () => {
     if (isReview) {
@@ -47,6 +54,7 @@ export default function Page() {
         setTestData(test);
       }
     }
+    resetStyle();
   };
 
   const handleBack = async () => {
@@ -60,6 +68,7 @@ export default function Page() {
       const test = await backQuestion(testData.index);
       setTestData(test);
     }
+    resetStyle();
   };
 
   const handleBackToQuestion = async () => {
@@ -69,6 +78,7 @@ export default function Page() {
       setIsReview(false);
       setButtons("Reading");
     }
+    resetStyle();
   };
 
   const handleReview = () => {
@@ -127,7 +137,7 @@ export default function Page() {
           onSubmit={handleSubmit}
         />
       ) : testData ? (
-        <Reading testData={testData} onSubmit={handleSubmit} />
+        <Reading testData={testData} onSubmit={handleSubmit} ref={readingRef} />
       ) : (
         <div>Loading...</div>
       )}

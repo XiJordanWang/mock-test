@@ -68,3 +68,7 @@ export interface ReviewProps {
   onSelectedQuestionIndex: (index: number) => void;
   onSubmit: () => void;
 }
+
+export interface ReadingHandles {
+  resetReading: () => void;
+}

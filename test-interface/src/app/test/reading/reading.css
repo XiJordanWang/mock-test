@@ -139,3 +139,8 @@ input[type="radio"].hidden:checked+.custom-radio .radio-checkmark::after {
   padding: 2px 5px;
   border-radius: 5px;
 }
+
+.reading-selected {
+  background-color: #0D6B6E;
+  color: white
+}

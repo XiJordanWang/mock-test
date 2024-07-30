@@ -1,39 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { ApiResponse } from "../interface";
 
-const choices = [
-  "Conditions on Earth are generally favorable to life, but aspects of our planet result in temperature variations that require organisms to regulate body temperature.",
-  "Adaptations to cold include both insulating the body with hair or feathers and preventing heat loss through increased body volume relative to surface area.",
-  "Antifreeze proteins have been found to be more effective in protecting simpler organisms than more complex organisms against freezing temperatures in the lakes of Antarctica.",
-  "Some organisms have the ability to regulate body temperature throughout the day by altering their size in response to the spin of Earth and the angle from which sunlight strikes it.",
-  "An organism can survive freezing temperatures by replacing water in its body with substances that have lower freezing points or by covering ice crystals with antifreeze proteins.",
-  "Tardigrades prevent damage from ice crystals by strengthening cell walls with trehalose and by lying dormant without body fluids until above-freezing temperatures return.",
-];
+// 类型定义
+interface Selection {
+  id: number;
+  information: string;
+  selected: boolean;
+}
 
-const DragComponent = () => {
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+const DragComponent: React.FC<{ data: ApiResponse }> = ({ data }) => {
+  const [draggedItemId, setDraggedItemId] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [droppedItems, setDroppedItems] = useState<{
-    [key: string]: string | null;
+    [key: string]: number | null;
   }>({
     box1: null,
     box2: null,
     box3: null,
   });
-  const [availableChoices, setAvailableChoices] = useState(choices);
+  const [successfullyDropped, setSuccessfullyDropped] = useState<boolean>(false);
 
-  const handleDragStart = (item: string) => {
-    setDraggedItem(item);
+  const [availableChoices, setAvailableChoices] = useState<Selection[]>(
+    data.selections
+  );
+
+  useEffect(() => {
+    console.log(droppedItems);
+  }, [droppedItems]);
+
+  const handleDragStart = (id: number) => {
+    setDraggedItemId(id);
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    if (draggedItemId) {
+      const element = document.getElementById(draggedItemId.toString());
+      if (element) {
+        element.style.color = successfullyDropped ? "#FFFFFF" : "black";
+      }
+    }
+    setDraggedItemId(null);
+    setSuccessfullyDropped(false); // Reset the flag
   };
 
   const handleDrop = (boxId: string) => {
-    if (draggedItem) {
+    if (draggedItemId !== null) {
+      const currentDroppedItem = droppedItems[boxId];
+
+      if (currentDroppedItem !== null) {
+        // Move the current item back to the available choices
+        setAvailableChoices((prev) =>
+          prev.map((item) =>
+            item.id === currentDroppedItem ? { ...item, selected: false } : item
+          )
+        );
+        const element = document.getElementById(currentDroppedItem.toString());
+        if (element) {
+          element.style.color = "black"; // Restore color of the moved item
+        }
+      }
+
+      // Place the dragged item into the box
       setDroppedItems((prev) => ({
         ...prev,
-        [boxId]: draggedItem,
+        [boxId]: draggedItemId,
       }));
       setAvailableChoices((prev) =>
-        prev.filter((choice) => choice !== draggedItem)
+        prev.map((item) =>
+          item.id === draggedItemId ? { ...item, selected: true } : item
+        )
       );
-      setDraggedItem(null);
+
+      setSuccessfullyDropped(true); // Mark as successfully dropped
     }
   };
 
@@ -42,13 +82,21 @@ const DragComponent = () => {
   };
 
   const handleBoxClick = (boxId: string) => {
-    const item = droppedItems[boxId];
-    if (item) {
+    const itemId = droppedItems[boxId];
+    if (itemId !== null) {
       setDroppedItems((prev) => ({
         ...prev,
         [boxId]: null,
       }));
-      setAvailableChoices((prev) => [...prev, item]);
+      setAvailableChoices((prev) =>
+        prev.map((item) =>
+          item.id === itemId ? { ...item, selected: false } : item
+        )
+      );
+      const element = document.getElementById(itemId.toString());
+      if (element) {
+        element.style.color = "black";
+      }
     }
   };
 
@@ -70,10 +118,7 @@ const DragComponent = () => {
           Drag your choices to the spaces where they belong. To review the
           passage, select <span className="font-bold">View Passage.</span>
         </div>
-        <div className="font-bold text-center mb-4">
-          Earth's climate is generally favorable for life, but organisms must be
-          able to deal with temperature variations.
-        </div>
+        <div className="font-bold text-center mb-4">{data.question}</div>
         {["box1", "box2", "box3"].map((boxId) => (
           <div
             key={boxId}
@@ -87,23 +132,35 @@ const DragComponent = () => {
             onDragOver={handleDragOver}
             onClick={() => handleBoxClick(boxId)}
           >
-            {droppedItems[boxId] && (
+            {droppedItems[boxId] !== null && (
               <div className="bg-[#0D6B6E] text-white p-2 rounded-2xl">
-                {droppedItems[boxId]}
+                {
+                  availableChoices.find(
+                    (item) => item.id === droppedItems[boxId]
+                  )?.information
+                }
               </div>
             )}
           </div>
         ))}
         <div className="mt-4 font-bold text-center">Answer Choices</div>
         <div className="grid grid-cols-2 gap-4 mt-4">
-          {availableChoices.map((choice, index) => (
+          {availableChoices.map((choice) => (
             <div
-              key={index}
-              className="flex items-start p-2 border border-gray-300 rounded-2xl bg-white"
-              draggable
-              onDragStart={() => handleDragStart(choice)}
+              id={choice.id.toString()}
+              key={choice.id}
+              className={`flex items-start p-2 border border-gray-300 rounded-2xl bg-white ${
+                choice.id === draggedItemId && isDragging ? "opacity-50" : ""
+              }`}
+              draggable={!choice.selected}
+              onDragStart={() => handleDragStart(choice.id)}
+              onDragEnd={handleDragEnd}
+              style={{
+                position: "relative",
+                color: "black", // Default color
+              }}
             >
-              <div className="flex-1">{choice}</div>
+              <div className="flex-1">{choice.information}</div>
             </div>
           ))}
         </div>
