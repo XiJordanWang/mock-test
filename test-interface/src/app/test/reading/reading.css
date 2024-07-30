@@ -118,3 +118,24 @@ input[type="radio"].hidden:checked+.custom-radio .radio-checkmark::after {
   background-color: #ccc;
   color: black;
 }
+
+.square-default {
+  display: none;
+}
+
+.square {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #0D6B6E;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.inserted-sentence {
+  background-color: #ccf5f7;
+  border: solid 2px #0D6B6E;
+  padding: 2px 5px;
+  border-radius: 5px;
+}

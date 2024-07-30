@@ -6,10 +6,13 @@ import Middle from "../middle";
 import "./reading.css"; // Ensure to import the CSS file
 import { ApiResponse, ReadingProps } from "../interface";
 import DragComponent from "./drag";
+import parse from "html-react-parser";
 
 const select = async (index: number, option: number) => {
   await axios.patch(`/reading/select/${index}/${option}`);
 };
+
+const squares = ["square1", "square2", "square3", "square4"];
 
 export default function Reading({ testData, onSubmit }: ReadingProps) {
   const [data, setData] = useState<ApiResponse | null>(null);
@@ -33,11 +36,11 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
   }, [fetchData]);
 
   useEffect(() => {
+    if (!data) return;
     const focusedParagraph = document.getElementById("focused-paragraph");
     if (focusedParagraph) {
       focusedParagraph.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-
     let id: string;
     switch (data?.type) {
       case "VOCABULARY":
@@ -50,11 +53,24 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
         id = "sentence" + data.sequence;
         break;
       case "INSERTION":
-        ["square1", "square2", "square3", "square4"].forEach((squareId) => {
+        let index =
+          data?.selections.findIndex((item) => item.id === data?.mySelection) +
+          1;
+        squares.forEach((squareId) => {
           const squareElement = document.getElementById(squareId);
           if (squareElement) {
-            squareElement.style.display = "inline-block";
-            squareElement.classList.remove("hidden");
+            const span = document.createElement("span");
+            if (data) {
+              span.textContent = data?.question;
+            }
+            span.style.fontWeight = "bold";
+            if (squareId === "square" + index) {
+              squareElement.innerHTML = "";
+              squareElement?.appendChild(span);
+              squareElement.className = "inserted-sentence";
+            } else {
+              squareElement.className = "square";
+            }
             squareElement.onclick = () => handleSquareClick(squareId);
           }
         });
@@ -77,10 +93,42 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
       }
     };
     checkAndApplyStyles();
-  }, [data]);
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSquareClick = (squareId: string) => {
     setCurrentSquare(squareId);
+    let newSelection: number | null = null;
+    switch (squareId) {
+      case "square1":
+        newSelection = data?.selections[0]?.id || null;
+        break;
+      case "square2":
+        newSelection = data?.selections[1]?.id || null;
+        break;
+      case "square3":
+        newSelection = data?.selections[2]?.id || null;
+        break;
+      case "square4":
+        newSelection = data?.selections[3]?.id || null;
+        break;
+    }
+    if (newSelection !== null) {
+      setMySelection(newSelection);
+      select(testData.index, newSelection);
+    }
+    squares.forEach((item) => {
+      if (item === squareId) {
+        return;
+      }
+      let square = document.getElementById(item);
+      if (!square) {
+        return;
+      }
+      if (!square?.hasChildNodes()) {
+        return;
+      }
+      square.firstChild.style.display = "none";
+    });
   };
 
   const handleOptionChange = async (
@@ -103,40 +151,42 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
         p.classList.remove("paragraph-line");
       }
     });
-
+    setInsertionQuestion(doc);
     return doc.body.innerHTML;
   };
 
-  useEffect(() => {
-    if (currentSquare && data?.selections) {
-      let newSelection: number | null = null;
-      switch (currentSquare) {
-        case "square1":
-          newSelection = data?.selections[0]?.id || null;
-          break;
-        case "square2":
-          newSelection = data?.selections[1]?.id || null;
-          break;
-        case "square3":
-          newSelection = data?.selections[2]?.id || null;
-          break;
-        case "square4":
-          newSelection = data?.selections[3]?.id || null;
-          break;
+  const setInsertionQuestion = (doc: Document) => {
+    if (currentSquare) {
+      const span = document.createElement("span");
+      if (data) {
+        span.textContent = data?.question;
       }
-      if (newSelection !== null) {
-        setMySelection(newSelection);
-        select(testData.index, newSelection);
-      }
+      span.style.fontWeight = "bold";
+      squares.forEach((item) => {
+        const squareElement = doc.querySelector("#" + item);
+        if (squareElement) {
+          if (item === currentSquare) {
+            squareElement?.appendChild(span);
+            squareElement.className = "inserted-sentence";
+          } else {
+            squareElement.className = "square";
+          }
+        }
+      });
     }
-  }, [currentSquare, data?.selections, testData.index]);
+  };
 
   if (!data) {
     return <div>Loading...</div>;
   }
 
   if (data.type === "DRAG") {
-    return <DragComponent />;
+    return (
+      <>
+        <Middle testData={testData} onSubmit={onSubmit} />
+        <DragComponent />
+      </>
+    );
   }
 
   return (
@@ -152,13 +202,9 @@ export default function Reading({ testData, onSubmit }: ReadingProps) {
               >
                 {data.heading}
               </div>
-              <div
-                className="article-content"
-                style={{ fontSize: "20px" }}
-                dangerouslySetInnerHTML={{
-                  __html: processContent(data.context, data.paragraphNum),
-                }}
-              />
+              <div className="article-content" style={{ fontSize: "20px" }}>
+                {parse(processContent(data.context, data.paragraphNum))}
+              </div>
             </div>
           </div>
         </div>

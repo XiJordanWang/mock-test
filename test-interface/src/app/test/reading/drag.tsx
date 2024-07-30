@@ -64,7 +64,7 @@ const DragComponent = () => {
           passage. This question is worth 2 points.
         </div>
         <div
-          className="bg-sky-100 rounded-2xl p-4 mb-4 text-center"
+          className="bg-[#ccf5f7] rounded-2xl p-4 mb-4 text-center"
           style={{ marginLeft: "50px", marginRight: "50px" }}
         >
           Drag your choices to the spaces where they belong. To review the

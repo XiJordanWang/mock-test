@@ -8,7 +8,7 @@ public class ParseHTML {
         for (char c : text.toCharArray()) {
             if (c == '▋') {
                 String id = "square" + count;
-                formattedText.append("<span id=\"").append(id).append("\" style=\"display:inline-block; width:20px; height:20px; background-color:#0D6B6E; border-radius:5px; display:none;\"></span>");
+                formattedText.append("<span id=\"").append(id).append("\" class=\"square-default\"></span>");
                 count++;
             } else {
                 formattedText.append(c);
