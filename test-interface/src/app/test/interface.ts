@@ -49,13 +49,14 @@ export interface ReadingProps {
 
 // interface.ts
 export interface HeaderProps {
-  onNext: () => void;
-  onBack: () => void;
-  onReview: () => void;
-  onReturn: () => void;
-  onBackToQuestion: () => void;
+  onNext?: () => void;
+  onBack?: () => void;
+  onReview?: () => void;
+  onReturn?: () => void;
+  onBegin?: () => void;
+  onBackToQuestion?: () => void;
   buttons: string;
-  isReview: boolean;
+  isReview?: boolean;
 }
 
 export interface Button {
@@ -72,4 +73,17 @@ export interface ReviewProps {
 
 export interface ReadingHandles {
   resetReading: () => void;
+}
+
+export interface MiddleProps {
+  type: string;
+  remainTime: number;
+  total: number;
+  index: number;
+  onSubmit: () => void;
+  isListening?: boolean;
+}
+
+export interface ListeningProps {
+  onListeningEnded: () => void;
 }

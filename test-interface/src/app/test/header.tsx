@@ -37,12 +37,25 @@ const reviewButtons = [
   },
 ];
 
+const listeningDirectionsButtons = [
+  { name: "Volume", icon: SpeakerWaveIcon },
+  {
+    name: "Begin",
+    icon: ArrowRightIcon,
+    backgroundColor: "white",
+    textColor: "text-[#027f80]",
+  },
+];
+
+const listeningButtons = [{ name: "Volume", icon: SpeakerWaveIcon }];
+
 export default function Header({
   onNext,
   onBack,
   onReview,
   onReturn,
   onBackToQuestion,
+  onBegin,
   buttons,
 }: HeaderProps) {
   const renderButtons = (buttonsArray: Button[]) => {
@@ -61,6 +74,8 @@ export default function Header({
             ? onReturn
             : button.name === "Back To Question"
             ? onBackToQuestion
+            : button.name === "Begin"
+            ? onBegin
             : undefined
         } // Call onBack for Back button and onNext for Next button
         className={classNames(
@@ -85,6 +100,10 @@ export default function Header({
     buttonsToRender = renderButtons(readingButtons);
   } else if (buttons === "Review") {
     buttonsToRender = renderButtons(reviewButtons);
+  } else if (buttons === "ListeningDirections") {
+    buttonsToRender = renderButtons(listeningDirectionsButtons);
+  } else if (buttons === "Listening") {
+    buttonsToRender = renderButtons(listeningButtons);
   } else {
     buttonsToRender = renderButtons(readingButtons);
   }

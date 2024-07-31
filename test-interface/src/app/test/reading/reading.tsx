@@ -200,7 +200,13 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
   if (data.type === "DRAG") {
     return (
       <>
-        <Middle testData={testData} onSubmit={onSubmit} />
+        <Middle
+          type="Reading"
+          remainTime={testData.remainTime}
+          index={testData.index}
+          total={testData.total}
+          onSubmit={onSubmit}
+        />
         <DragComponent data={data} index={testData.index} />
       </>
     );
@@ -208,7 +214,13 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
 
   return (
     <>
-      <Middle testData={testData} onSubmit={onSubmit} />
+      <Middle
+        type="Reading"
+        remainTime={testData.remainTime}
+        index={testData.index}
+        total={testData.total}
+        onSubmit={onSubmit}
+      />
       <div className="flex h-[calc(100vh-64px)] p-4 gap-4">
         <div className="flex-1 bg-gray-100 border border-white rounded-lg overflow-y-auto p-4">
           <div className="tpo-article-box">

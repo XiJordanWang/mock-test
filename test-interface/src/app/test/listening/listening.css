@@ -1,0 +1,57 @@
+/* Hide default radio button */
+input[type="radio"].hidden {
+    display: none;
+  }
+  
+  /* Custom radio button container */
+  .custom-radio {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding-left: 30px;
+  }
+  
+  /* Custom radio button circle */
+  .custom-radio .radio-checkmark {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 24px; /* Increased size */
+    width: 24px;  /* Increased size */
+    background-color: white;
+    border: 2px solid #0D6B6E;
+    border-radius: 50%;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  
+  /* Checkmark inside the radio button */
+  .custom-radio .radio-checkmark::after {
+    content: "";
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px; /* Increased size */
+    height: 12px; /* Increased size */
+    border-radius: 50%;
+    background: #0D6B6E;
+  }
+  
+  /* Show checkmark when radio button is checked */
+  input[type="radio"].hidden:checked + .custom-radio .radio-checkmark::after {
+    display: block;
+  }
+  
+  /* Adjust font size of label */
+  .custom-radio span {
+    font-size: 20px; /* Adjust font size here */
+  }
+  
+  /* Increase font size of question text */
+  .question-title {
+    font-size: 24px; /* Increased font size for the question */
+    font-weight: bold;
+  }

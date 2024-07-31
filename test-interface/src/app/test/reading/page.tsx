@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import Header from "../header";
 import Reading from "./reading";
-import axios from "../../../api/axiosConfig";
 import { ReadingRef, ReadingTest } from "../interface";
 import Review from "./review";
 import {
