@@ -8,25 +8,13 @@ import Reading from "./reading";
 import axios from "../../../api/axiosConfig";
 import { ReadingRef, ReadingTest } from "../interface";
 import Review from "./review";
-
-const nextQuestion = async (index: number) => {
-  const response = await axios.put<ReadingTest>(`/reading/next/${index}`);
-  return response.data;
-};
-
-const backQuestion = async (index: number) => {
-  const response = await axios.put<ReadingTest>(`/reading/back/${index}`);
-  return response.data;
-};
-
-const backToQuestion = async (index: number) => {
-  const response = await axios.get<ReadingTest>(`/reading/question/${index}`);
-  return response.data;
-};
-
-const submit = async () => {
-  await axios.patch(`/reading`);
-};
+import {
+  backQuestion,
+  backToQuestion,
+  nextQuestion,
+  start,
+  submit,
+} from "@/api/readingAPI";
 
 export default function Page() {
   const readingRef = useRef<ReadingRef>();
@@ -100,7 +88,7 @@ export default function Page() {
   const handleConfirmFinish = async () => {
     setShowModal(false);
     await submit();
-    router.push("/test/listening"); // 使用 router.push 进行客户端导航
+    router.push("/test/listening");
   };
 
   const handleCancelFinish = () => {
@@ -109,13 +97,13 @@ export default function Page() {
 
   const handleSubmit = async () => {
     await submit();
-    router.push("/test/listening"); // 使用 router.push 进行客户端导航
+    router.push("/test/listening");
   };
 
   useEffect(() => {
     const startReadingSession = async () => {
-      const response = await axios.post<ReadingTest>("/reading/start");
-      setTestData(response.data);
+      const data = await start();
+      setTestData(data);
     };
     startReadingSession();
   }, []);

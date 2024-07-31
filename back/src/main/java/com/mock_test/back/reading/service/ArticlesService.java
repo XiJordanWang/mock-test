@@ -15,6 +15,7 @@ import com.mock_test.back.util.ParseHTML;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticlesService {
@@ -145,6 +147,7 @@ public class ArticlesService {
                     .question(question.getQuestion())
                     .type(question.getType())
                     .mySelection(questionDetail.getMySelection())
+                    .mySelections(questionDetail.getMySelections())
                     .selections(selectionDTOS)
                     .sequence(question.getSequence())
                     .build();
@@ -229,6 +232,28 @@ public class ArticlesService {
                     }
                     question.setMySelection(option);
                     question.setMyAnswer(selection.getOption().toString());
+                    question.setSelected(true);
+                });
+        redisHashService.saveOrUpdate(result);
+    }
+
+    public void multipleSelect(Integer index, List<Integer> options) {
+        ReadingTest result = redisHashService.get();
+        result.getQuestions().stream()
+                .filter(item -> Objects.equals(item.getIndex(), index))
+                .findFirst()
+                .ifPresent(question -> {
+                    if (CollectionUtils.isEmpty(options)) {
+                        return;
+                    }
+                    List<Selection> selections = selectionRepository.findAllById(options);
+                    if (CollectionUtils.isEmpty(selections)) {
+                        return;
+                    }
+                    question.setMySelections(options);
+                    question.setMyAnswer(selections.stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(",")));
                     question.setSelected(true);
                 });
         redisHashService.saveOrUpdate(result);

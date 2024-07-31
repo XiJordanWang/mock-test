@@ -28,7 +28,7 @@ public class ReadingTest {
 
     @JsonProperty("currentArticleId")
     private Integer currentArticleId;
-    
+
     @JsonProperty("sequence")
     private Integer sequence;
 
@@ -45,6 +45,8 @@ public class ReadingTest {
         private Integer articleId;
         @JsonProperty("mySelection")
         private Integer mySelection;
+        @JsonProperty("mySelections")
+        private List<Integer> mySelections;
         @JsonProperty("myAnswer")
         private String myAnswer;
         @JsonProperty("isSelected")

@@ -61,4 +61,9 @@ public class ReadingController {
     void select(@PathVariable("index") Integer index, @PathVariable("option") Integer option) {
         articlesService.select(index, option);
     }
+
+    @PatchMapping("/select/{index}")
+    void multipleSelect(@PathVariable("index") Integer index, @RequestBody List<Integer> options) {
+        articlesService.multipleSelect(index, options);
+    }
 }

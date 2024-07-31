@@ -31,6 +31,7 @@ export interface ApiResponse {
   question: string;
   type: string;
   mySelection: number;
+  mySelections: number[];
   sequence: number;
   selections: Selection[];
 }

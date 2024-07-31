@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ApiResponse } from "../interface";
+import { multipleSelect } from "@/api/readingAPI";
 
 // 类型定义
 interface Selection {
@@ -8,7 +9,10 @@ interface Selection {
   selected: boolean;
 }
 
-const DragComponent: React.FC<{ data: ApiResponse }> = ({ data }) => {
+const DragComponent: React.FC<{ data: ApiResponse; index: number }> = ({
+  data,
+  index,
+}) => {
   const [draggedItemId, setDraggedItemId] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [droppedItems, setDroppedItems] = useState<{
@@ -18,15 +22,46 @@ const DragComponent: React.FC<{ data: ApiResponse }> = ({ data }) => {
     box2: null,
     box3: null,
   });
-  const [successfullyDropped, setSuccessfullyDropped] = useState<boolean>(false);
+  const [successfullyDropped, setSuccessfullyDropped] =
+    useState<boolean>(false);
 
   const [availableChoices, setAvailableChoices] = useState<Selection[]>(
     data.selections
   );
 
   useEffect(() => {
-    console.log(droppedItems);
-  }, [droppedItems]);
+    const selctions = data.mySelections;
+    if (selctions.length > 0) {
+      droppedItems["box1"] = data.mySelections[0];
+      const element = document.getElementById(data.mySelections[0].toString());
+      if (element) {
+        element.style.color = "#FFFFFF";
+      }
+    }
+    if (selctions.length > 1) {
+      droppedItems["box2"] = data.mySelections[1];
+      const element = document.getElementById(data.mySelections[1].toString());
+      if (element) {
+        element.style.color = "#FFFFFF";
+      }
+    }
+    if (selctions.length > 2) {
+      droppedItems["box3"] = data.mySelections[2];
+      const element = document.getElementById(data.mySelections[2].toString());
+      if (element) {
+        element.style.color = "#FFFFFF";
+      }
+    }
+  }, [data]); // eslint-disable-line
+
+  useEffect(() => {
+    const mySelections = Object.values(droppedItems).filter(
+      (value) => value !== null
+    );
+    if (mySelections.length > 0) {
+      multipleSelect(index, mySelections);
+    }
+  }, [droppedItems]); // eslint-disable-line
 
   const handleDragStart = (id: number) => {
     setDraggedItemId(id);

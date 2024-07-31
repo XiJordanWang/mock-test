@@ -144,3 +144,46 @@ input[type="radio"].hidden:checked+.custom-radio .radio-checkmark::after {
   background-color: #0D6B6E;
   color: white
 }
+
+/* Basic styles for the checkbox and label */
+.checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-checkmark {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+.checkbox-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox:checked + .custom-checkbox .checkbox-checkmark {
+  background-color: #0D6B6E;
+}
+
+.checkbox:checked + .custom-checkbox .checkbox-checkmark:after {
+  display: block;
+}

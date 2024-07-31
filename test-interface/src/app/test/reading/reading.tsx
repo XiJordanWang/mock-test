@@ -7,24 +7,20 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import axios from "../../../api/axiosConfig";
 import Middle from "../middle";
 import "./reading.css";
 import { ApiResponse, ReadingProps } from "../interface";
 import DragComponent from "./drag";
 import parse from "html-react-parser";
-
-const select = async (index: number, option: number) => {
-  await axios.patch(`/reading/select/${index}/${option}`);
-};
+import { fetchReadingData, multipleSelect, select } from "@/api/readingAPI";
 
 const squares = ["square1", "square2", "square3", "square4"];
-
 const Reading = forwardRef((props: ReadingProps, ref) => {
   const { testData, onSubmit } = props;
   const [data, setData] = useState<ApiResponse | null>(null);
   const [mySelection, setMySelection] = useState<number | null>(null);
   const [lastId, setLastId] = useState<string | null>(null);
+  const [mySelections, setMySelections] = useState<number[] | []>([]);
 
   useImperativeHandle(ref, () => ({
     resetReading,
@@ -48,12 +44,10 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
 
   const fetchData = useCallback(async () => {
     if (testData.index) {
-      const response = await axios.get<ApiResponse>(
-        `/reading/${testData.index}`
-      );
-      setData(response.data);
-      if (response.data.mySelection !== null) {
-        setMySelection(response.data.mySelection);
+      const data = await fetchReadingData(testData.index);
+      setData(data);
+      if (data.mySelection !== null) {
+        setMySelection(data.mySelection);
       }
     }
   }, [testData.index]);
@@ -80,6 +74,11 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
         break;
       case "SENTENCE":
         id = "sentence" + data.sequence;
+        break;
+      case "MULTIPLE_CHOICE":
+        if (data.mySelections != null) {
+          setMySelections(data.mySelections);
+        }
         break;
       case "INSERTION":
         let index =
@@ -115,7 +114,13 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
     };
     checkAndApplyStyles();
     setLastId(id);
-  }, [data]);
+  }, [data]); // eslint-disable-line
+
+  useEffect(() => {
+    if (mySelections.length > 0) {
+      multipleSelect(testData.index, mySelections);
+    }
+  }, [mySelections]); // eslint-disable-line
 
   const handleSquareClick = (squareId: string) => {
     let newSelection: number | null = null;
@@ -179,6 +184,15 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
     return doc.body.innerHTML;
   };
 
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value);
+    setMySelections((prevSelections: number[]) =>
+      prevSelections.includes(value)
+        ? prevSelections.filter((id) => id !== value)
+        : [...prevSelections, value]
+    );
+  };
+
   if (!data) {
     return <div>Loading...</div>;
   }
@@ -187,7 +201,7 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
     return (
       <>
         <Middle testData={testData} onSubmit={onSubmit} />
-        <DragComponent data={data} />
+        <DragComponent data={data} index={testData.index} />
       </>
     );
   }
@@ -231,6 +245,7 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
             )}
             <div className="mt-4 text-lg">
               {data.type !== "INSERTION" &&
+                data.type !== "MULTIPLE_CHOICE" &&
                 data.selections.map((selection) => (
                   <div className="flex items-center mb-2" key={selection.id}>
                     <input
@@ -251,6 +266,31 @@ const Reading = forwardRef((props: ReadingProps, ref) => {
                         {selection.information}
                       </span>
                     </label>
+                  </div>
+                ))}
+              {data.type === "MULTIPLE_CHOICE" &&
+                data.selections.map((selection) => (
+                  <div className="flex items-center mb-2" key={selection.id}>
+                    <div key={selection.id}>
+                      <input
+                        type="checkbox"
+                        id={`option${selection.id}`}
+                        name="question"
+                        value={selection.id}
+                        className="checkbox"
+                        checked={mySelections.includes(selection.id)}
+                        onChange={handleCheckboxChange}
+                      />
+                      <label
+                        htmlFor={`option${selection.id}`}
+                        className="custom-checkbox"
+                      >
+                        <span className="checkbox-checkmark"></span>
+                        <span style={{ fontSize: "20px" }}>
+                          {selection.information}
+                        </span>
+                      </label>
+                    </div>
                   </div>
                 ))}
             </div>
