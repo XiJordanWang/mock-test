@@ -31,8 +31,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.mock_test.back.reading.model.Question.Type.DRAG;
-import static com.mock_test.back.reading.model.Question.Type.MULTIPLE_CHOICE;
+import static com.mock_test.back.reading.model.Question.Type.*;
 
 @Service
 public class ArticlesService {
@@ -140,6 +139,11 @@ public class ArticlesService {
             Article article = articlesRepository.getReferenceById(questionDetail.getArticleId());
             Question question = questionRepository.getReferenceById(questionDetail.getId());
             List<Selection> selections = selectionRepository.findByQuestionId(question.getId());
+            if (question.getType().equals(INSERTION)) {
+                selections = selections.stream()
+                        .sorted(Comparator.comparing(Selection::getOption))
+                        .collect(Collectors.toList());
+            }
             List<ReadingDTO.SelectionDTO> selectionDTOS = new ArrayList<>();
             selections.forEach(item -> selectionDTOS.add(ReadingDTO.SelectionDTO.builder()
                     .id(item.getId())
