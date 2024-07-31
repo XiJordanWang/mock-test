@@ -1,0 +1,852 @@
+[
+  {
+    "type": "CONVERSATION",
+    "questions": [
+      {
+        "sequence": 1,
+        "question": "Why does the student peak with the professor?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To ask for assistance coming up with an idea for her assignment"
+          },
+          {
+            "option": "B",
+            "information": "To go over an article the professor had assigned"
+          },
+          {
+            "option": "C",
+            "information": "To discuss an architectural concept she would like to work with"
+          },
+          {
+            "option": "D",
+            "information": "To review her work on a project she recently submitted"
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "question": "What point do the speakers make when they discuss the materials used in the iceberg design?",
+        "correctAnswer": "D",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "The materials are designed to help cool the building"
+          },
+          {
+            "option": "B",
+            "information": "The materials are more costly than building materials typically used in urban structures"
+          },
+          {
+            "option": "C",
+            "information": "The thickness of materials requires that they be cut with special equipment"
+          },
+          {
+            "option": "D",
+            "information": "The amount of materials used reduced the impact on the environment"
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "question": "Why does the professor mention retail space?",
+        "correctAnswer": "D",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To explain the cause of city developer’s tax problem"
+          },
+          {
+            "option": "B",
+            "information": "To introduce the focus of the class’s next model project"
+          },
+          {
+            "option": "C",
+            "information": "To point out how quickly modern retail structures are built"
+          },
+          {
+            "option": "D",
+            "information": "To provide background on why the iceberg design was created"
+          }
+        ]
+      },
+      {
+        "sequence": 4,
+        "question": "What does the professor say about air beams?",
+        "correctAnswer": "AC",
+        "type": "MULTIPLE_CHOICE",
+        "selections": [
+          {
+            "option": "A",
+            "information": "They provide support to the iceberg"
+          },
+          {
+            "option": "B",
+            "information": "They are made partly from steel"
+          },
+          {
+            "option": "C",
+            "information": "They permit an iceberg to assume a variety of shapes"
+          },
+          {
+            "option": "D",
+            "information": "They take a long time to manufacture"
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "question": "What can be inferred about the student?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "She was not fully aware of the trip’s date"
+          },
+          {
+            "option": "B",
+            "information": "She does not intend to go on the trip"
+          },
+          {
+            "option": "C",
+            "information": "She had already been to the Frank LIoyd Wright house"
+          },
+          {
+            "option": "D",
+            "information": "She would prefer to lead the tour, not be a group member"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "LECTURE",
+    "questions": [
+      {
+        "sequence": 1,
+        "question": "What is the lecture mainly about?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "The life of a famous Italian Renaissance artist"
+          },
+          {
+            "option": "B",
+            "information": "The history of fresco painting in Italy"
+          },
+          {
+            "option": "C",
+            "information": "The creation of a particular work of Renaissance art"
+          },
+          {
+            "option": "D",
+            "information": "The construction of a typical church of the Italian Renaissance"
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "question": "According to the professor, what is one advantage of using the fresco technique?",
+        "correctAnswer": "A",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "A fresco can last a long time"
+          },
+          {
+            "option": "B",
+            "information": "The materials for making a fresco are inexpensive"
+          },
+          {
+            "option": "C",
+            "information": "The fresco technique is easy to learn"
+          },
+          {
+            "option": "D",
+            "information": "A fresco can be completed quickly"
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "question": "According to the professor, why is a fresco painted before the plaster dries?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "So that mistakes can be corrected easily"
+          },
+          {
+            "option": "B",
+            "information": "So that the paint will sink into the plaster"
+          },
+          {
+            "option": "C",
+            "information": "So that the colors of the paints can be blended better"
+          },
+          {
+            "option": "D",
+            "information": "So that human forms will appear more lifelike"
+          }
+        ]
+      },
+      {
+        "sequence": 4,
+        "question": "Why does the professor mention the artist who painted with a paintbrush in each hand?",
+        "correctAnswer": "D",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To describe how the Sistine Chapel’s ceiling was painted"
+          },
+          {
+            "option": "B",
+            "information": "To illustrate the ingenious creativity of Renaissance artists"
+          },
+          {
+            "option": "C",
+            "information": "To explain how Michelangelo learned to paint"
+          },
+          {
+            "option": "D",
+            "information": "To emphasize the need for fresco painters to work quickly"
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "question": "Why did Michelangelo choose to build footbridges rather than traditional scaffolding when he painted the chapel?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To accommodate the curved shape of the chapel’s ceiling"
+          },
+          {
+            "option": "B",
+            "information": "To keep the floor clear for ceremonies in the chapel"
+          },
+          {
+            "option": "C",
+            "information": "To reach both the walls and the ceiling of the chapel"
+          },
+          {
+            "option": "D",
+            "information": "To paint while lying on his back for long periods of time"
+          }
+        ]
+      },
+      {
+        "sequence": 6,
+        "question": "What does the professor imply when he says this?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "He has suggestions about how students can deal with difficult situations"
+          },
+          {
+            "option": "B",
+            "information": "Many people would have been uncomfortable painting the chapel’s ceiling"
+          },
+          {
+            "option": "C",
+            "information": "There was one problem that Michelangelo was unable to overcome"
+          },
+          {
+            "option": "D",
+            "information": "Michelangelo’s reputation as a great artist may be somewhat exaggerated"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "LECTURE",
+    "questions": [
+      {
+        "sequence": 1,
+        "question": "What does the professor mainly discuss?",
+        "correctAnswer": "D",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "The main achievements of the Voyager spacecraft mission"
+          },
+          {
+            "option": "B",
+            "information": "Differences between Uranus and other gas giant planets"
+          },
+          {
+            "option": "C",
+            "information": "Reasons for the increasing interest of scientists in the planet Uranus"
+          },
+          {
+            "option": "D",
+            "information": "Characteristics of Uranus learned using a variety of methods"
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "question": "Why does the professor mention the color of Uranus?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To give an example of a feature that Uranus shares with Jupiter"
+          },
+          {
+            "option": "B",
+            "information": "To give an example of a discovery made by the Voyager spacecraft mission"
+          },
+          {
+            "option": "C",
+            "information": "To explain how a component of Uranus’ atmosphere was identified"
+          },
+          {
+            "option": "D",
+            "information": "To explain how sunlight affects temperatures on Uranus"
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "question": "According to the professor, how did astronomers deduce the composition of the planet Uranus?",
+        "correctAnswer": "AD",
+        "type": "MULTIPLE_CHOICE",
+        "selections": [
+          {
+            "option": "A",
+            "information": "By calculating Uranus’ density"
+          },
+          {
+            "option": "B",
+            "information": "By measuring Uranus’ force of gravity"
+          },
+          {
+            "option": "C",
+            "information": "By examining the strength of Uranus’ magnetic field"
+          },
+          {
+            "option": "D",
+            "information": "By comparing Uranus with Jupiter"
+          }
+        ]
+      },
+      {
+        "sequence": 4,
+        "question": "What features of Uranus do some astronomers think were caused by the planet’s collision with another object?",
+        "correctAnswer": "BD",
+        "type": "MULTIPLE_CHOICE",
+        "selections": [
+          {
+            "option": "A",
+            "information": "The composition of its core"
+          },
+          {
+            "option": "B",
+            "information": "The angle of its axis of rotation"
+          },
+          {
+            "option": "C",
+            "information": "Its rapid rotation"
+          },
+          {
+            "option": "D",
+            "information": "Its low internal temperature"
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "question": "Why does the professor mention Uranus’ magnetic field?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To point out a surprising similarity between Uranus and Earth"
+          },
+          {
+            "option": "B",
+            "information": "To emphasize the limitations of remote observations in astronomy"
+          },
+          {
+            "option": "C",
+            "information": "To point out a recent discovery about Uranus that contradicts earlier findings"
+          },
+          {
+            "option": "D",
+            "information": "To explain one effect of Uranus’ distance from the Sun"
+          }
+        ]
+      },
+      {
+        "sequence": 6,
+        "question": "Why does the professor say this?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To suggest that the student’s question reflects a common misconception"
+          },
+          {
+            "option": "B",
+            "information": "To remind the student that they will discuss rocky planets in the next class"
+          },
+          {
+            "option": "C",
+            "information": "To help the student realize the answer to his own question"
+          },
+          {
+            "option": "D",
+            "information": "To encourage the student to clarify what he means"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "CONVERSATION",
+    "questions": [
+      {
+        "sequence": 1,
+        "question": "Why does the woman go to see the man?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To provide feedback on her previous housing experience"
+          },
+          {
+            "option": "B",
+            "information": "To find out how she can participate in a different housing program"
+          },
+          {
+            "option": "C",
+            "information": "To reapply for housing at the Eco House next semester"
+          },
+          {
+            "option": "D",
+            "information": "To get information about a student assistant position"
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "question": "What is the woman’s attitude about the Eco House?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "She had hoped it would be more committed to sustainable practices"
+          },
+          {
+            "option": "B",
+            "information": "She believes that its program is exactly what she will need"
+          },
+          {
+            "option": "C",
+            "information": "She thinks its program is too narrow for her academic goals"
+          },
+          {
+            "option": "D",
+            "information": "She regrets that residents are only permitted to live there for one year"
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "question": "What are two advantages of living at the Mary Blake House?",
+        "correctAnswer": "AD",
+        "type": "MULTIPLE_CHOICE",
+        "selections": [
+          {
+            "option": "A",
+            "information": "It would allow her to actively engage with guest scholars"
+          },
+          {
+            "option": "B",
+            "information": "It would allow her to create a house theme with other students"
+          },
+          {
+            "option": "C",
+            "information": "She would join a classmate who currently lives at the Mary Blake House"
+          },
+          {
+            "option": "D",
+            "information": "She would have an opportunity to qualify for staff discounts"
+          }
+        ]
+      },
+      {
+        "sequence": 4,
+        "question": "Why does the woman mention a journalist?",
+        "correctAnswer": "D",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To provide background on one of the faculty living at the Mary Blake House"
+          },
+          {
+            "option": "B",
+            "information": "To provide an example of a recent dinner guest at the Mary Blake House"
+          },
+          {
+            "option": "C",
+            "information": "To suggest a way to create publicity for the Mary Blake House program"
+          },
+          {
+            "option": "D",
+            "information": "To point out a Blake House program guest that she would be interested in"
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "question": "What does the man ask the woman to do?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "Fill out a questionnaire about the Mary Blake House program"
+          },
+          {
+            "option": "B",
+            "information": "Participate in a review of program houses that is being conducted"
+          },
+          {
+            "option": "C",
+            "information": "Interview to become a student assistant at the Eco House"
+          },
+          {
+            "option": "D",
+            "information": "Provide feedback about the application process on the Web site"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "LECTURE",
+    "questions": [
+      {
+        "sequence": 1,
+        "question": "What is the purpose of the lecture?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To suggest that cryptic patterns in the animal kingdom can be reduced to only a few basic forms"
+          },
+          {
+            "option": "B",
+            "information": "To explain how cephalopods change cryptic patterns based on their visual perception"
+          },
+          {
+            "option": "C",
+            "information": "To contrast underwater and dryland crypsis strategies"
+          },
+          {
+            "option": "D",
+            "information": "To trace the evolution of crypsis in animals as a defense against predators"
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "question": "What can be inferred about an animal that only uses stipple crypsis?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "It will have a difficult time hiding from predators"
+          },
+          {
+            "option": "B",
+            "information": "It is likely to be of a medium body size"
+          },
+          {
+            "option": "C",
+            "information": "It will tend to avoid areas with multiple colors and patterns"
+          },
+          {
+            "option": "D",
+            "information": "It will most likely be found close to a seashore"
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "question": "What happens to some cephalopods when they swim over a gravel patch on the seafloor?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "They change their skin color to match the color of the darkest pieces of gravel"
+          },
+          {
+            "option": "B",
+            "information": "They display irregularly shaped dark and light patches"
+          },
+          {
+            "option": "C",
+            "information": "They display a disruptive coloration to match the local environment"
+          },
+          {
+            "option": "D",
+            "information": "They quickly swim away from the gravel patch"
+          }
+        ]
+      },
+      {
+        "sequence": 4,
+        "question": "What features of disruptive crypsis does the professor mention?",
+        "correctAnswer": "AD",
+        "type": "MULTIPLE_CHOICE",
+        "selections": [
+          {
+            "option": "A",
+            "information": "It disguises the outline of the animal that uses it"
+          },
+          {
+            "option": "B",
+            "information": "It works by contrasting with the colors in the surrounding habitat"
+          },
+          {
+            "option": "C",
+            "information": "It is most effective when used against a single-colored background"
+          },
+          {
+            "option": "D",
+            "information": "It can incorporate a combination of other crypsis patterns"
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "question": "Why does the professor mention the tiger?",
+        "correctAnswer": "A",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To illustrate that results of the cephalopod research can be extended to many other animals"
+          },
+          {
+            "option": "B",
+            "information": "To give an example of an animal whose crypsis strategy has been extensively studied"
+          },
+          {
+            "option": "C",
+            "information": "To point out how different its crypsis strategy is from the strategy used by smaller animals"
+          },
+          {
+            "option": "D",
+            "information": "To argue that predators rely on crypsis less than prey species do"
+          }
+        ]
+      },
+      {
+        "sequence": 6,
+        "question": "What does the professor imply when she says this?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "Crypsis in cephalopods can rarely fool human visual perception"
+          },
+          {
+            "option": "B",
+            "information": "Few animals use crypsis to hide from predators"
+          },
+          {
+            "option": "C",
+            "information": "New information has led to the reevaluation of some previous assumptions"
+          },
+          {
+            "option": "D",
+            "information": "More cephalopod research needs to be done to obtain accurate data"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "LECTURE",
+    "questions": [
+      {
+        "sequence": 1,
+        "question": "What is the main purpose of the lecture?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To discuss the design of the earliest homes built in the eastern Mediterranean"
+          },
+          {
+            "option": "B",
+            "information": "To discuss evidence indicating a change of lifestyle among a group of prehistoric people"
+          },
+          {
+            "option": "C",
+            "information": "To compare evidence of early human settlement in different regions of the world"
+          },
+          {
+            "option": "D",
+            "information": "To compare different techniques used to process grains in the eastern Mediterranean"
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "question": "According to the professor, what was one way in which hunter-gatherers benefited after the glaciers retreated?",
+        "correctAnswer": "B",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "The warmer climate allowed them to build simpler, lighter houses"
+          },
+          {
+            "option": "B",
+            "information": "The appearance of open grasslands provided easier access to food"
+          },
+          {
+            "option": "C",
+            "information": "An increase in the number of lakes attracted more migrating animals"
+          },
+          {
+            "option": "D",
+            "information": "An increase in annual rainfall made farming more productive"
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "question": "Why does the professor describe features of Natufian sites?",
+        "correctAnswer": "C",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "The features indicate that the Natufians established the largest early human settlement in the world"
+          },
+          {
+            "option": "B",
+            "information": "The sites contain the first strong evidence of hunting by prehistoric people"
+          },
+          {
+            "option": "C",
+            "information": "Compelling evidence of a sedentary lifestyle is available at the sites"
+          },
+          {
+            "option": "D",
+            "information": "Artifacts at the sites are well preserved because of the region’s dry climate"
+          }
+        ]
+      },
+      {
+        "sequence": 4,
+        "question": "What evidence found by researchers does the professor describe to show that the Natufians were NOT a nomadic people?",
+        "correctAnswer": "ADE",
+        "type": "MULTIPLE_CHOICE",
+        "selections": [
+          {
+            "option": "A",
+            "information": "Tools that were too heavy to move very far"
+          },
+          {
+            "option": "B",
+            "information": "Large structures used for storing grain"
+          },
+          {
+            "option": "C",
+            "information": "Stone enclosures that separated one home from another"
+          },
+          {
+            "option": "D",
+            "information": "Underground foundations for houses"
+          },
+          {
+            "option": "E",
+            "information": "Remains of certain animals"
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "question": "What point does the professor make about young gazelles and migratory birds?",
+        "correctAnswer": "D",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "They were believed to be scared animals by the Natufians"
+          },
+          {
+            "option": "B",
+            "information": "They lived near open grasslands"
+          },
+          {
+            "option": "C",
+            "information": "They were the most common animals found in the regions"
+          },
+          {
+            "option": "D",
+            "information": "They would have been present at the site at different seasons"
+          }
+        ]
+      },
+      {
+        "sequence": 6,
+        "question": "Why does the professor say this?",
+        "correctAnswer": "A",
+        "type": "SELECTION",
+        "selections": [
+          {
+            "option": "A",
+            "information": "To prevent a misunderstanding"
+          },
+          {
+            "option": "B",
+            "information": "To explain how agriculture began"
+          },
+          {
+            "option": "C",
+            "information": "To define a technical term"
+          },
+          {
+            "option": "D",
+            "information": "To signal a change of topic"
+          }
+        ]
+      }
+    ]
+  }
+]

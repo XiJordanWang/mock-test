@@ -41,7 +41,7 @@ public class Question {
     @Column(name = "correct_answer", nullable = false)
     private String correctAnswer;
 
-    public static enum Type {
+    public enum Type {
         SELECTION, VOCABULARY, MULTIPLE_CHOICE, REFER, SENTENCE, INSERTION, DRAG
     }
 
