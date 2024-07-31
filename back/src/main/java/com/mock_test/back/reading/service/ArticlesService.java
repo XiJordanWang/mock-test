@@ -1,6 +1,7 @@
 package com.mock_test.back.reading.service;
 
 import com.mock_test.back.reading.dto.AddReadingDTO;
+import com.mock_test.back.reading.dto.GradeReadingDTO;
 import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.dto.ReadingDTO;
 import com.mock_test.back.reading.model.Article;
@@ -11,6 +12,7 @@ import com.mock_test.back.reading.repository.ArticlesRepository;
 import com.mock_test.back.reading.repository.QuestionRepository;
 import com.mock_test.back.reading.repository.SelectionRepository;
 import com.mock_test.back.redis.service.RedisHashService;
+import com.mock_test.back.test.service.TestService;
 import com.mock_test.back.util.ParseHTML;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +23,16 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.mock_test.back.reading.model.Question.Type.DRAG;
+import static com.mock_test.back.reading.model.Question.Type.MULTIPLE_CHOICE;
 
 @Service
 public class ArticlesService {
@@ -44,6 +48,9 @@ public class ArticlesService {
 
     @Autowired
     RedisHashService redisHashService;
+
+    @Autowired
+    TestService testService;
 
     public ReadingTest startReadingTest() {
         ReadingTest result = redisHashService.get();
@@ -204,16 +211,79 @@ public class ArticlesService {
     public void submit() {
         ReadingTest result = redisHashService.get();
         List<Integer> ids = result.getQuestions().stream()
-                .map(ReadingTest.QuestionDetail::getMySelection)
+                .flatMap(item -> {
+                    if (item.getMySelections() != null) {
+                        return item.getMySelections().stream().filter(Objects::nonNull);
+                    } else {
+                        return Stream.ofNullable(item.getMySelection());
+                    }
+                })
                 .filter(Objects::nonNull)
                 .toList();
+        List<Integer> questionIds = result.getQuestions().stream().map(ReadingTest.QuestionDetail::getId).toList();
+
         selectionRepository.updateMyAnswers(ids);
-        List<Selection> selections = selectionRepository.findByIdIn(ids);
-        List<Integer> list = selections.stream()
-                .filter(item -> item.getMyAnswer() && item.getIsCorrect())
-                .map(Selection::getId)
-                .toList();
-        questionRepository.updateCorrectnessInIds(list);
+        List<Question> questions = questionRepository.findAllById(questionIds);
+        List<Selection> selections = selectionRepository.findAllById(ids);
+
+        AtomicInteger correct = new AtomicInteger(0);
+        AtomicInteger total = new AtomicInteger(0);
+
+        Set<Integer> articleIdSet = new HashSet<>();
+
+        questions.forEach(item -> {
+            articleIdSet.add(item.getArticleId());
+            long count = selections.stream()
+                    .filter(selection -> selection.getQuestionId().equals(item.getId()))
+                    .map(selection -> selection.getIsCorrect().equals(selection.getMyAnswer()))
+                    .toList().stream().filter(correctness -> correctness).count();
+            if (item.getType().equals(MULTIPLE_CHOICE)) {
+                total.getAndAdd(2);
+                if (count == 2) {
+                    item.setCorrectness(true);
+                    correct.getAndAdd(2);
+                    return;
+                }
+                if (count == 1) {
+                    item.setCorrectness(false);
+                    correct.getAndAdd(1);
+                    return;
+                }
+                item.setCorrectness(false);
+                return;
+            }
+            if (item.getType().equals(DRAG)) {
+                total.getAndAdd(2);
+                if (count == 3) {
+                    item.setCorrectness(true);
+                    correct.getAndAdd(2);
+                    return;
+                }
+                if (count == 2) {
+                    item.setCorrectness(false);
+                    correct.getAndAdd(2);
+                    return;
+                }
+                item.setCorrectness(false);
+                return;
+            }
+            item.setCorrectness(false);
+            total.getAndAdd(1);
+            if (count == 1) {
+                correct.getAndAdd(1);
+                item.setCorrectness(true);
+            }
+        });
+
+        testService.saveReading(GradeReadingDTO.builder()
+                .uuid(result.getId())
+                .startTime(LocalDateTime.parse(result.getStartTime()))
+                .readingArticleIds(articleIdSet.stream().toList())
+                .readingScale(correct.get() + "/" + total.get())
+                .readingScore((int) Math.round(((double) correct.get() / total.get()) * 30))
+                .build());
+
+        questionRepository.saveAll(questions);
         redisHashService.del();
     }
 
@@ -278,7 +348,7 @@ public class ArticlesService {
             type = Question.Type.REFER;
         }
         if (questionDTO.getQuestion().contains("TWO")) {
-            type = Question.Type.MULTIPLE_CHOICE;
+            type = MULTIPLE_CHOICE;
         }
         if (questionDTO.getQuestion().contains("Which of the sentences below")) {
             type = Question.Type.SENTENCE;

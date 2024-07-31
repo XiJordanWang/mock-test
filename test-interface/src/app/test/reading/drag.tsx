@@ -31,6 +31,9 @@ const DragComponent: React.FC<{ data: ApiResponse; index: number }> = ({
 
   useEffect(() => {
     const selctions = data.mySelections;
+    if (!selctions) {
+      return;
+    }
     if (selctions.length > 0) {
       droppedItems["box1"] = data.mySelections[0];
       const element = document.getElementById(data.mySelections[0].toString());

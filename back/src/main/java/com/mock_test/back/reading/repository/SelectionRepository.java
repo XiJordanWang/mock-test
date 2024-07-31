@@ -13,8 +13,6 @@ import java.util.List;
 
 @Repository
 public interface SelectionRepository extends JpaRepository<Selection, Integer> {
-    @Query("select s from Selection s where s.id in :ids")
-    List<Selection> findByIdIn(@Param("ids") List<Integer> ids);
 
     @Transactional
     @Modifying
