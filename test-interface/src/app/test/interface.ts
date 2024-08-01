@@ -22,6 +22,24 @@ export interface QuestionDetail {
   question: string;
 }
 
+export interface ListeningTest {
+  id: string;
+  total: number;
+  index: number;
+  startTime: string;
+  remainTime: number;
+  currentListeningId: number;
+  currentQuestionId: number;
+  currentSection: string;
+  section1: Array<ListeningDetail>;
+  section2: Array<ListeningDetail>;
+}
+
+export interface ListeningDetail {
+  id: number;
+  type: string;
+}
+
 export interface ApiResponse {
   id: number;
   heading: string;
@@ -85,5 +103,22 @@ export interface MiddleProps {
 }
 
 export interface ListeningProps {
+  path: string;
   onListeningEnded: () => void;
+}
+
+export interface ListeningQuestionProps {
+  questionId: number;
+}
+
+export interface ListeningQuestion {
+  id: number;
+  question: string;
+  type: string;
+  selections: Array<ListeningSelection>;
+}
+
+export interface ListeningSelection {
+  id: number;
+  information: string;
 }

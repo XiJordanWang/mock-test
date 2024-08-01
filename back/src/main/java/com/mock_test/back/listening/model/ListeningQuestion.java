@@ -22,6 +22,9 @@ public class ListeningQuestion {
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
 
+    @Column(name = "question_path", nullable = false)
+    private String questionPath;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private ListeningQuestion.Type type;

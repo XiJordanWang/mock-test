@@ -52,7 +52,7 @@ public class ArticlesService {
     TestService testService;
 
     public ReadingTest startReadingTest() {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
             List<Article> articles = articlesRepository.findByIsDoneFalse();
             AtomicInteger index = new AtomicInteger(0);
@@ -72,27 +72,27 @@ public class ArticlesService {
             return redisHashService.createReadingTest(list);
         }
         this.resetRemainTime(result);
-        redisHashService.saveOrUpdate(result);
+        redisHashService.saveOrUpdateReading(result);
         return result;
     }
 
     public ReadingTest review() {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         this.resetRemainTime(result);
-        redisHashService.saveOrUpdate(result);
+        redisHashService.saveOrUpdateReading(result);
         return result;
     }
 
     public ReadingTest backToQuestion(Integer index) {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         result.setIndex(index);
         this.resetRemainTime(result);
-        redisHashService.saveOrUpdate(result);
+        redisHashService.saveOrUpdateReading(result);
         return result;
     }
 
     public ReadingTest next(Integer index) {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
             return null;
         }
@@ -105,12 +105,12 @@ public class ArticlesService {
                 .orElseThrow()
                 .getArticleId());
         this.resetRemainTime(result);
-        redisHashService.saveOrUpdate(result);
+        redisHashService.saveOrUpdateReading(result);
         return result;
     }
 
     public ReadingTest back(Integer index) {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getId())) {
             return null;
         }
@@ -123,13 +123,13 @@ public class ArticlesService {
                 .orElseThrow()
                 .getArticleId());
         this.resetRemainTime(result);
-        redisHashService.saveOrUpdate(result);
+        redisHashService.saveOrUpdateReading(result);
         return result;
     }
 
 
     public ReadingDTO getByQuestionNum(Integer questionNum) {
-        ReadingTest.QuestionDetail questionDetail = redisHashService.get().getQuestions()
+        ReadingTest.QuestionDetail questionDetail = redisHashService.getReading().getQuestions()
                 .stream()
                 .filter(item -> questionNum.equals(item.getIndex()))
                 .findFirst()
@@ -213,7 +213,7 @@ public class ArticlesService {
 
     @Transactional
     public void submit() {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         List<Integer> ids = result.getQuestions().stream()
                 .flatMap(item -> {
                     if (item.getMySelections() != null) {
@@ -286,13 +286,13 @@ public class ArticlesService {
                 .readingScale(correct.get() + "/" + total.get())
                 .readingScore((int) Math.round(((double) correct.get() / total.get()) * 30))
                 .build());
-
         questionRepository.saveAll(questions);
-        redisHashService.del();
+        redisHashService.createListeningTest(result.getId());
+        redisHashService.delReading();
     }
 
     public void select(Integer index, Integer option) {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         result.getQuestions().stream()
                 .filter(item -> Objects.equals(item.getIndex(), index))
                 .findFirst()
@@ -308,11 +308,11 @@ public class ArticlesService {
                     question.setMyAnswer(selection.getOption().toString());
                     question.setSelected(true);
                 });
-        redisHashService.saveOrUpdate(result);
+        redisHashService.saveOrUpdateReading(result);
     }
 
     public void multipleSelect(Integer index, List<Integer> options) {
-        ReadingTest result = redisHashService.get();
+        ReadingTest result = redisHashService.getReading();
         result.getQuestions().stream()
                 .filter(item -> Objects.equals(item.getIndex(), index))
                 .findFirst()
@@ -330,7 +330,7 @@ public class ArticlesService {
                             .collect(Collectors.joining(",")));
                     question.setSelected(true);
                 });
-        redisHashService.saveOrUpdate(result);
+        redisHashService.saveOrUpdateReading(result);
     }
 
     private int getParagraphNum(int paragraphNum, AddReadingDTO.QuestionDTO questionDTO) {

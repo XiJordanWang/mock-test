@@ -1,14 +1,15 @@
-package com.mock_test.back.listening.dto;
+package com.mock_test.back.listening.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@Builder
-public class ListeningTestDTO {
+public class ListeningTest {
     @JsonProperty("id")
     private String id;
 
@@ -30,18 +31,20 @@ public class ListeningTestDTO {
     @JsonProperty("currentListeningId")
     private Integer currentListeningId;
 
-    @JsonProperty("listeningPath")
-    private String listeningPath;
+    @JsonProperty("currentQuestionId")
+    private Integer currentQuestionId;
 
     @JsonProperty("section1")
-    private List<ListeningDetailDTO> section1;
+    private List<ListeningDetail> section1;
 
     @JsonProperty("section2")
-    private List<ListeningDetailDTO> section2;
+    private List<ListeningDetail> section2;
 
     @Data
     @Builder
-    public static class ListeningDetailDTO {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ListeningDetail {
 
         @JsonProperty("id")
         private Integer id;
@@ -50,12 +53,16 @@ public class ListeningTestDTO {
         private String type;
 
         @JsonProperty("questions")
-        private List<ListeningQuestionDTO> questions;
+        private List<ListeningQuestion> questions;
     }
 
     @Data
     @Builder
-    public static class ListeningQuestionDTO {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ListeningQuestion {
+        @JsonProperty("index")
+        private Integer index;
 
         @JsonProperty("id")
         private Integer id;

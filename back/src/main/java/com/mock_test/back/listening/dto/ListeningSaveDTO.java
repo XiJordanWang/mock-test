@@ -9,11 +9,13 @@ import java.util.List;
 
 @Data
 public class ListeningSaveDTO {
+    private Integer documentId;
     private Listening.Type type;
     private List<ListeningQuestionDTO> questions;
 
     @Data
     public static class ListeningQuestionDTO {
+        private String fileName;
         private Integer sequence;
         private String question;
         private String correctAnswer;

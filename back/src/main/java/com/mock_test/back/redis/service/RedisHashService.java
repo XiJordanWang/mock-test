@@ -2,6 +2,7 @@ package com.mock_test.back.redis.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mock_test.back.listening.model.ListeningTest;
 import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.model.ReadingTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class RedisHashService {
     private ObjectMapper objectMapper;
 
     private final static String READING = "READING";
+    private final static String LISTENING = "LISTENING";
 
     public ReadingTest createReadingTest(List<QuestionDTO> list) {
         String id = UUID.randomUUID().toString();
@@ -48,26 +50,51 @@ public class RedisHashService {
 
         readingTest.setQuestions(questions);
 
-        this.saveOrUpdate(readingTest);
+        this.saveOrUpdateReading(readingTest);
         redisTemplate.expire(READING, 2, TimeUnit.HOURS);
         return readingTest;
     }
 
-    public ReadingTest get() {
+    public void createListeningTest(String id) {
+        ListeningTest test = new ListeningTest();
+        test.setId(id);
+        this.saveOrUpdateListening(test);
+        redisTemplate.expire(LISTENING, 2, TimeUnit.HOURS);
+    }
+
+    public void startListeningTest(ListeningTest dto) {
+        Map<String, Object> hash = objectMapper.convertValue(dto, new TypeReference<>() {
+        });
+        redisTemplate.opsForHash().putAll(LISTENING, hash);
+    }
+
+    public ReadingTest getReading() {
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(READING);
         Map<String, Object> result = new HashMap<>();
         entries.forEach((key, value) -> result.put(key.toString(), value));
         return objectMapper.convertValue(result, ReadingTest.class);
     }
 
-    public void del() {
+    public ListeningTest getListening() {
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(LISTENING);
+        Map<String, Object> result = new HashMap<>();
+        entries.forEach((key, value) -> result.put(key.toString(), value));
+        return objectMapper.convertValue(result, ListeningTest.class);
+    }
+
+    public void delReading() {
         redisTemplate.delete(READING);
     }
 
-    public Map<String, Object> saveOrUpdate(ReadingTest readingTest) {
+    public void saveOrUpdateReading(ReadingTest readingTest) {
         Map<String, Object> hash = objectMapper.convertValue(readingTest, new TypeReference<>() {
         });
         redisTemplate.opsForHash().putAll(READING, hash);
-        return hash;
+    }
+
+    public void saveOrUpdateListening(ListeningTest readingTest) {
+        Map<String, Object> hash = objectMapper.convertValue(readingTest, new TypeReference<>() {
+        });
+        redisTemplate.opsForHash().putAll(LISTENING, hash);
     }
 }

@@ -23,6 +23,9 @@ public class Listening {
     @Column(name = "path", nullable = false)
     private String path;
 
+    @Column(name = "is_done")
+    private Boolean isDone;
+
     public enum Type {
         CONVERSATION, LECTURE
     }

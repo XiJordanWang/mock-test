@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./listening.css";
+import { ListeningQuestion, ListeningQuestionProps } from "../interface";
+import { getQuestion, selectQuestion } from "@/api/listeningAPI";
 
-const Question: React.FC = () => {
+const Question: React.FC<ListeningQuestionProps> = ({ questionId }) => {
   const [isAudioEnded, setIsAudioEnded] = useState(false);
+  const [question, setQuestion] = useState<ListeningQuestion | null>(null);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -21,79 +25,51 @@ const Question: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchQuestionData = async () => {
+      const question = await getQuestion(questionId);
+      setQuestion(question);
+    };
+    fetchQuestionData();
+  }, [questionId]);
+
+  const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedOption(parseInt(e.target.value));
+    selectQuestion(questionId, parseInt(e.target.value));
+  };
+
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="mb-4">
-        <strong className="text-xl question-title">
-          Why does the student speak with the professor?
-        </strong>
+        <strong className="text-xl question-title">{question?.question}</strong>
       </div>
 
-      <audio ref={audioRef} src="/1_1.mp3" autoPlay />
+      <audio
+        ref={audioRef}
+        src={"http://localhost:8080/files/QUESTION/" + question?.id}
+        autoPlay
+      />
 
       {isAudioEnded && (
         <div className="mt-4">
           <form>
-            <div className="flex items-center mb-2">
-              <input
-                type="radio"
-                id="optionA"
-                name="question"
-                value="A"
-                className="hidden"
-              />
-              <label htmlFor="optionA" className="custom-radio">
-                <span className="radio-checkmark"></span>
-                <span>
-                  A. To ask for assistance coming up with an idea for her
-                  assignment
-                </span>
-              </label>
-            </div>
-            <div className="flex items-center mb-2">
-              <input
-                type="radio"
-                id="optionB"
-                name="question"
-                value="B"
-                className="hidden"
-              />
-              <label htmlFor="optionB" className="custom-radio">
-                <span className="radio-checkmark"></span>
-                <span>B. To go over an article the professor had assigned</span>
-              </label>
-            </div>
-            <div className="flex items-center mb-2">
-              <input
-                type="radio"
-                id="optionC"
-                name="question"
-                value="C"
-                className="hidden"
-              />
-              <label htmlFor="optionC" className="custom-radio">
-                <span className="radio-checkmark"></span>
-                <span>
-                  C. To discuss an architectural concept she would like to work
-                  with
-                </span>
-              </label>
-            </div>
-            <div className="flex items-center mb-2">
-              <input
-                type="radio"
-                id="optionD"
-                name="question"
-                value="D"
-                className="hidden"
-              />
-              <label htmlFor="optionD" className="custom-radio">
-                <span className="radio-checkmark"></span>
-                <span>
-                  D. To review her work on a project she recently submitted
-                </span>
-              </label>
-            </div>
+            {question?.selections.map((item) => (
+              <div key={item.id} className="flex items-center mb-2">
+                <input
+                  type="radio"
+                  id={`option${item.id}`}
+                  name="question"
+                  value={item.id}
+                  checked={selectedOption === item.id}
+                  onChange={handleOptionChange}
+                  className="hidden"
+                />
+                <label htmlFor={`option${item.id}`} className="custom-radio">
+                  <span className="radio-checkmark"></span>
+                  <span>{item.information}</span>
+                </label>
+              </div>
+            ))}
           </form>
         </div>
       )}

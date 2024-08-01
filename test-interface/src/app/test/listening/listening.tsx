@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { ListeningProps } from "../interface";
 
-const Listening: React.FC<ListeningProps> = ({ onListeningEnded }) => {
+const Listening: React.FC<ListeningProps> = ({ onListeningEnded, path }) => {
   const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -47,7 +47,7 @@ const Listening: React.FC<ListeningProps> = ({ onListeningEnded }) => {
           style={{ width: `${progress}%` }}
         ></div>
       </div>
-      <audio ref={audioRef} src="/1_1.mp3" autoPlay />
+      <audio ref={audioRef} src={path} autoPlay />
     </div>
   );
 };

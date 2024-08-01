@@ -1,12 +1,11 @@
 package com.mock_test.back.listening.controller;
 
+import com.mock_test.back.listening.dto.ListeningDTO;
 import com.mock_test.back.listening.dto.ListeningSaveDTO;
+import com.mock_test.back.listening.model.ListeningTest;
 import com.mock_test.back.listening.service.ListeningService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +19,26 @@ public class ListeningController {
     @PostMapping
     public void save(@RequestBody List<ListeningSaveDTO> dto) {
         listeningService.save(dto);
+    }
+
+    @PutMapping
+    public ListeningTest start() {
+        return listeningService.start();
+    }
+
+    @GetMapping("/question/{id}")
+    public ListeningDTO question(@PathVariable("id") Integer id) {
+        return listeningService.getQuestionInfo(id);
+    }
+
+    @PatchMapping("/select/{questionId}/{selectionId}")
+    public void select(@PathVariable("questionId") Integer questionId,
+                       @PathVariable("selectionId") Integer selectionId) {
+        listeningService.select(questionId, selectionId);
+    }
+
+    @PutMapping("/next")
+    public ListeningTest next() {
+        return listeningService.next();
     }
 }

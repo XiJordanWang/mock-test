@@ -47,6 +47,17 @@ const listeningDirectionsButtons = [
   },
 ];
 
+const listeningQuestionButtons = [
+  { name: "Volume", icon: SpeakerWaveIcon },
+  { name: "Help", icon: QuestionMarkCircleIcon },
+  {
+    name: "Next",
+    icon: ArrowRightIcon,
+    backgroundColor: "white",
+    textColor: "text-[#027f80]",
+  },
+];
+
 const listeningButtons = [{ name: "Volume", icon: SpeakerWaveIcon }];
 
 export default function Header({
@@ -104,8 +115,8 @@ export default function Header({
     buttonsToRender = renderButtons(listeningDirectionsButtons);
   } else if (buttons === "Listening") {
     buttonsToRender = renderButtons(listeningButtons);
-  } else {
-    buttonsToRender = renderButtons(readingButtons);
+  } else if (buttons === "ListeningQuestions") {
+    buttonsToRender = renderButtons(listeningQuestionButtons);
   }
 
   return (
