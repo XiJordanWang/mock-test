@@ -26,7 +26,6 @@ public class FileController {
     public ResponseEntity<Resource> getFile(@PathVariable("type") String type, @PathVariable("id") Integer id) {
         try {
             String listeningPath = listeningService.getListeningPath(type, id);
-//            String listeningPath = "/Volumes/Info/TOEFLActualQuestions/2020-2023Listening/2022/Audio/1/1_1.mp3";
             Path filePath = Paths.get(listeningPath).toAbsolutePath().normalize();
             Resource resource = new UrlResource(filePath.toUri());
 

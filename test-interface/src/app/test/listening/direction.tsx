@@ -7,6 +7,7 @@ const ListeningSectionDirections: React.FC = () => {
       <h1 className="text-center text-2xl font-bold mb-8">
         Listening Section Directions
       </h1>
+      <hr className="my-4 border-gray-400" />
       <p className="mb-4">
         In this section, you will be able to demonstrate your ability to
         understand conversations and lectures in English. The section is divided
@@ -22,8 +23,9 @@ const ListeningSectionDirections: React.FC = () => {
         This means that you will hear, but not
       </p>
       <p className="mb-4">
-        You must answer each question. After you answer, select Next. You cannot
-        return to previous questions.
+        You must answer each question. After you answer, select{" "}
+        <span className="font-bold">Next</span>. You cannot return to previous
+        questions
       </p>
     </div>
   );

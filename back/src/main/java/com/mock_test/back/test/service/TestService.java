@@ -12,6 +12,14 @@ public class TestService {
     @Autowired
     TestRepository testRepository;
 
+    public Test findByUUID(String uuid) {
+        return testRepository.findByUuid(uuid);
+    }
+
+    public void saveOrUpdate(Test test) {
+        testRepository.save(test);
+    }
+
 
     public void saveReading(GradeReadingDTO dto) {
         testRepository.save(Test.builder()

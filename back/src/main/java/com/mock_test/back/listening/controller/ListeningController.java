@@ -41,4 +41,9 @@ public class ListeningController {
     public ListeningTest next() {
         return listeningService.next();
     }
+
+    @PatchMapping("/submit")
+    public void submit() {
+        listeningService.submit();
+    }
 }

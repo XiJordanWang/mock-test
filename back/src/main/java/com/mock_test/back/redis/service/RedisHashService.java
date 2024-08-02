@@ -97,4 +97,8 @@ public class RedisHashService {
         });
         redisTemplate.opsForHash().putAll(LISTENING, hash);
     }
+
+    public void delListening() {
+        redisTemplate.delete(LISTENING);
+    }
 }

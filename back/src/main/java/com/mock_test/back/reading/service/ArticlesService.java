@@ -214,6 +214,11 @@ public class ArticlesService {
     @Transactional
     public void submit() {
         ReadingTest result = redisHashService.getReading();
+        List<Integer> articleIds = result.getQuestions().stream()
+                .map(ReadingTest.QuestionDetail::getArticleId)
+                .distinct()
+                .toList();
+
         List<Integer> ids = result.getQuestions().stream()
                 .flatMap(item -> {
                     if (item.getMySelections() != null) {
@@ -228,15 +233,32 @@ public class ArticlesService {
 
         selectionRepository.updateMyAnswers(ids);
         List<Question> questions = questionRepository.findAllById(questionIds);
-        List<Selection> selections = selectionRepository.findAllById(ids);
 
         AtomicInteger correct = new AtomicInteger(0);
         AtomicInteger total = new AtomicInteger(0);
 
-        Set<Integer> articleIdSet = new HashSet<>();
+        this.computeScore(questions, ids, correct, total);
 
+        testService.saveReading(GradeReadingDTO.builder()
+                .uuid(result.getId())
+                .startTime(LocalDateTime.parse(result.getStartTime()))
+                .readingArticleIds(articleIds)
+                .readingScale(correct.get() + "/" + total.get())
+                .readingScore((int) Math.round(((double) correct.get() / total.get()) * 30))
+                .build());
+        questionRepository.saveAll(questions);
+
+        articlesRepository.updateIsDoneToTrue(articleIds);
+        redisHashService.createListeningTest(result.getId());
+        redisHashService.delReading();
+    }
+
+    private void computeScore(List<Question> questions,
+                              List<Integer> ids,
+                              AtomicInteger correct,
+                              AtomicInteger total) {
+        List<Selection> selections = selectionRepository.findAllById(ids);
         questions.forEach(item -> {
-            articleIdSet.add(item.getArticleId());
             long count = selections.stream()
                     .filter(selection -> selection.getQuestionId().equals(item.getId()))
                     .map(selection -> selection.getIsCorrect().equals(selection.getMyAnswer()))
@@ -278,17 +300,6 @@ public class ArticlesService {
                 item.setCorrectness(true);
             }
         });
-
-        testService.saveReading(GradeReadingDTO.builder()
-                .uuid(result.getId())
-                .startTime(LocalDateTime.parse(result.getStartTime()))
-                .readingArticleIds(articleIdSet.stream().toList())
-                .readingScale(correct.get() + "/" + total.get())
-                .readingScore((int) Math.round(((double) correct.get() / total.get()) * 30))
-                .build());
-        questionRepository.saveAll(questions);
-        redisHashService.createListeningTest(result.getId());
-        redisHashService.delReading();
     }
 
     public void select(Integer index, Integer option) {

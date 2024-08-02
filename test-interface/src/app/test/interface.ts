@@ -99,7 +99,7 @@ export interface MiddleProps {
   total: number;
   index: number;
   onSubmit: () => void;
-  isListening?: boolean;
+  isPause?: boolean;
 }
 
 export interface ListeningProps {
@@ -109,6 +109,7 @@ export interface ListeningProps {
 
 export interface ListeningQuestionProps {
   questionId: number;
+  onEnded: () => void;
 }
 
 export interface ListeningQuestion {

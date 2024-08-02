@@ -9,20 +9,18 @@ import com.mock_test.back.listening.model.ListeningSelection;
 import com.mock_test.back.listening.repository.ListeningQuestionRepository;
 import com.mock_test.back.listening.repository.ListeningRepository;
 import com.mock_test.back.listening.repository.ListeningSelectionRepository;
+import com.mock_test.back.reading.dto.GradeReadingDTO;
 import com.mock_test.back.redis.service.RedisHashService;
+import com.mock_test.back.test.model.Test;
+import com.mock_test.back.test.service.TestService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class ListeningService {
@@ -38,6 +36,9 @@ public class ListeningService {
 
     @Autowired
     RedisHashService redisHashService;
+
+    @Autowired
+    TestService testService;
 
     private final String COMMON_PATH = "/Volumes/Info/TOEFLActualQuestions/2020-2023Listening/2022/Audio/";
 
@@ -202,12 +203,83 @@ public class ListeningService {
         return result;
     }
 
+    @Transactional
+    public void submit() {
+        ListeningTest result = redisHashService.getListening();
+        List<ListeningTest.ListeningDetail> listeningList = new ArrayList<>();
+        listeningList.addAll(result.getSection1());
+        listeningList.addAll(result.getSection2());
+
+        List<Integer> listeningIds = new ArrayList<>();
+        List<Integer> questionIds = new ArrayList<>();
+        List<Integer> myAnswers = new ArrayList<>();
+        listeningList.forEach(listening -> {
+            listeningIds.add(listening.getId());
+            myAnswers.addAll(listening.getQuestions().stream()
+                    .map(ListeningTest.ListeningQuestion::getMyAnswer)
+                    .filter(Objects::nonNull)
+                    .toList());
+            questionIds.addAll(listening.getQuestions().stream()
+                    .map(ListeningTest.ListeningQuestion::getId)
+                    .toList());
+        });
+
+
+        listeningSelectionRepository.updateMyAnswerToTrue(myAnswers);
+
+        AtomicInteger myRawScore = new AtomicInteger(0);
+        AtomicInteger totalRawScore = new AtomicInteger(0);
+        this.computeScore(questionIds, myRawScore, totalRawScore);
+
+        listeningRepository.updateIsDoneToTrue(listeningIds);
+
+        Test test = testService.findByUUID(result.getId());
+        test.setListeningIds(listeningIds);
+        test.setListeningScale(myRawScore.get() + "/" + totalRawScore.get());
+        test.setListeningScore((int) Math.round(((double) myRawScore.get() / totalRawScore.get()) * 30));
+        testService.saveOrUpdate(test);
+
+        listeningRepository.updateIsDoneToTrue(questionIds);
+        redisHashService.delListening();
+    }
+
+    private void computeScore(List<Integer> questionIds,
+                              AtomicInteger myRawScore,
+                              AtomicInteger totalRawScore) {
+        List<ListeningQuestion> questions = listeningQuestionRepository.findAllById(questionIds);
+        List<Integer> correctQuestionIds = new ArrayList<>();
+        questions.forEach(question -> {
+            List<ListeningSelection> multipleSelections = listeningSelectionRepository.findByQuestionId(question.getId());
+            long count = multipleSelections.stream()
+                    .filter(item -> Boolean.TRUE.equals(item.getMyAnswer()) && Boolean.TRUE.equals(item.getIsCorrect()))
+                    .count();
+            if (question.getType().equals(ListeningQuestion.Type.MULTIPLE_CHOICE)) {
+                totalRawScore.getAndAdd(2);
+                if (count == 2) {
+                    myRawScore.getAndAdd(2);
+                    correctQuestionIds.add(question.getId());
+                }
+                if (count == 1) {
+                    myRawScore.getAndAdd(1);
+                }
+                return;
+            }
+            if (count == 1) {
+                myRawScore.getAndAdd(1);
+                correctQuestionIds.add(question.getId());
+            }
+            totalRawScore.getAndAdd(1);
+        });
+        listeningQuestionRepository.updateCorrectnessToTrue(correctQuestionIds);
+    }
+
 
     public String getListeningPath(String type, Integer id) {
         String path = "";
         switch (type) {
             case "LISTENING":
-                path = listeningRepository.getReferenceById(id).getPath();
+//                path = listeningRepository.getReferenceById(id).getPath();
+                path = "/Volumes/Info/TOEFLActualQuestions/2020-2023Listening/2022/Audio/1/1_1.mp3";
                 break;
             case "QUESTION":
                 path = listeningQuestionRepository.getReferenceById(id).getQuestionPath();

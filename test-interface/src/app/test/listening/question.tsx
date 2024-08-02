@@ -3,7 +3,10 @@ import "./listening.css";
 import { ListeningQuestion, ListeningQuestionProps } from "../interface";
 import { getQuestion, selectQuestion } from "@/api/listeningAPI";
 
-const Question: React.FC<ListeningQuestionProps> = ({ questionId }) => {
+const Question: React.FC<ListeningQuestionProps> = ({
+  questionId,
+  onEnded,
+}) => {
   const [isAudioEnded, setIsAudioEnded] = useState(false);
   const [question, setQuestion] = useState<ListeningQuestion | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -15,6 +18,7 @@ const Question: React.FC<ListeningQuestionProps> = ({ questionId }) => {
     if (audio) {
       const handleEnd = () => {
         setIsAudioEnded(true);
+        onEnded();
       };
 
       audio.addEventListener("ended", handleEnd);
@@ -26,6 +30,7 @@ const Question: React.FC<ListeningQuestionProps> = ({ questionId }) => {
   }, []);
 
   useEffect(() => {
+    setIsAudioEnded(false);
     const fetchQuestionData = async () => {
       const question = await getQuestion(questionId);
       setQuestion(question);

@@ -34,6 +34,9 @@ public class Test {
     @Column(name = "reading_score")
     private Integer readingScore;
 
+    @Column(name = "listening_ids")
+    private List<Integer> listeningIds;
+
     @Column(name = "listening_scale")
     private String listeningScale;
 

@@ -10,7 +10,7 @@ export default function Middle({
   index,
   total,
   onSubmit,
-  isListening,
+  isPause,
 }: MiddleProps) {
   // Initial countdown time in seconds (36 minutes)
   const initialTime = remainTime;
@@ -20,7 +20,14 @@ export default function Middle({
   const [isTimeVisible, setIsTimeVisible] = useState(true);
 
   useEffect(() => {
-    if (isListening) {
+    if (!remainTime) {
+      return;
+    }
+    setTimeLeft(remainTime);
+  }, [remainTime]);
+
+  useEffect(() => {
+    if (isPause) {
       return;
     }
     const timer = setInterval(() => {
@@ -35,7 +42,7 @@ export default function Middle({
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [isListening, onSubmit]);
+  }, [isPause, onSubmit]); // eslint-disable-line
 
   // Format time into MM:SS
   const formatTime = (seconds: number) => {
@@ -55,7 +62,7 @@ export default function Middle({
     <div className="flex items-center justify-between p-4">
       <div className="flex items-center space-x-4">
         <span className="font-bold text-gray-800">{type}</span>
-        {!isListening && (
+        {!isPause && (
           <>
             <span className="text-gray-600">|</span>
             <span className="text-gray-600">
