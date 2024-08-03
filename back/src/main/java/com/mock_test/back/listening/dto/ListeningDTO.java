@@ -11,6 +11,7 @@ import java.util.List;
 public class ListeningDTO {
     private int id;
     private String question;
+    private Number correctNumber;
     private ListeningQuestion.Type type;
     private List<ListeningSelectionsDTO> selections;
 

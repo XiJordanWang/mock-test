@@ -37,9 +37,19 @@ public class ListeningController {
         listeningService.select(questionId, selectionId);
     }
 
+    @PatchMapping("/select/{questionId}")
+    void multipleSelect(@PathVariable("questionId") Integer questionId, @RequestBody List<Integer> options) {
+        listeningService.multipleSelect(questionId, options);
+    }
+
     @PutMapping("/next")
     public ListeningTest next() {
         return listeningService.next();
+    }
+
+    @PatchMapping("/next/section")
+    public ListeningTest changeSection() {
+        return listeningService.changeSection();
     }
 
     @PatchMapping("/submit")

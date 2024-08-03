@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface ListeningQuestionRepository extends JpaRepository<ListeningQuestion, Integer> {
-    List<ListeningQuestion> findByListeningId(Integer listeningId);
+    List<ListeningQuestion> findByListeningIdOrderBySequenceAsc(Integer listeningId);
 
     @Modifying
     @Transactional

@@ -7,7 +7,7 @@ import Header from "../header";
 import Listening from "./listening";
 import Middle from "../middle";
 import Question from "./question";
-import { next, start } from "@/api/listeningAPI";
+import { changeSection, next, start, submit } from "@/api/listeningAPI";
 import { ListeningTest } from "../interface";
 import EndOfPart from "./endOfPart";
 
@@ -32,6 +32,15 @@ const Page: React.FC = () => {
   };
 
   const handdleSubmitted = () => {
+    if (testData?.currentSection === "section1") {
+      changeSection();
+      setIsEndedOfPart(true);
+      setIsQuestion(false);
+      setIsPause(true);
+      setRemainTime(60 * 10);
+      return;
+    }
+    submit();
     router.push("/test/speaking");
   };
 
@@ -55,7 +64,6 @@ const Page: React.FC = () => {
       return;
     }
     if (testData?.currentSection === "section2" && testData?.index === 17) {
-      console.log("finish listening section!");
       handdleSubmitted();
       return;
     }

@@ -116,6 +116,7 @@ export interface ListeningQuestion {
   id: number;
   question: string;
   type: string;
+  correctNumber: number;
   selections: Array<ListeningSelection>;
 }
 

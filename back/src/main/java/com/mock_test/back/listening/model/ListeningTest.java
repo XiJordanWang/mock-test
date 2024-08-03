@@ -73,6 +73,9 @@ public class ListeningTest {
         @JsonProperty("myAnswer")
         private Integer myAnswer;
 
+        @JsonProperty("myAnswers")
+        private List<Integer> myAnswers;
+
         @JsonProperty("type")
         private String type;
     }

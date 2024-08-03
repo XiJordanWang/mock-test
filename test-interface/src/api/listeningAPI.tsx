@@ -20,7 +20,23 @@ export const selectQuestion = async (
   await axios.patch(`/listening/select/${questionId}/${selectionId}`);
 };
 
+export const selectMutipleQuestion = async (
+  questionId: number,
+  selections: number[]
+) => {
+  await axios.patch(`/listening/select/${questionId}`, selections);
+};
+
 export const next = async () => {
   const response = await axios.put<ListeningTest>(`/listening/next`);
   return response.data;
+};
+
+export const changeSection = async () => {
+  const response = await axios.patch<ListeningTest>(`/listening/next/section`);
+  return response.data;
+};
+
+export const submit = async () => {
+  await axios.patch(`/listening/submit`);
 };

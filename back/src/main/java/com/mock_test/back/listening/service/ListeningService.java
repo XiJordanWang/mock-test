@@ -16,6 +16,8 @@ import com.mock_test.back.test.service.TestService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -121,7 +123,7 @@ public class ListeningService {
         return ListeningTest.ListeningDetail.builder()
                 .id(listening.getId())
                 .type(listening.getType().toString())
-                .questions(listeningQuestionRepository.findByListeningId(listening.getId()).stream()
+                .questions(listeningQuestionRepository.findByListeningIdOrderBySequenceAsc(listening.getId()).stream()
                         .map(item -> ListeningTest.ListeningQuestion.builder()
                                 .index(index.getAndAdd(1))
                                 .id(item.getId())
@@ -145,6 +147,7 @@ public class ListeningService {
         return ListeningDTO.builder()
                 .id(question.getId())
                 .type(question.getType())
+                .correctNumber(selections.stream().filter(ListeningSelection::getIsCorrect).count())
                 .question(question.getQuestion())
                 .selections(selectionsDTOS)
                 .build();
@@ -152,8 +155,21 @@ public class ListeningService {
 
     public void select(Integer questionId, Integer selectionId) {
         ListeningTest result = redisHashService.getListening();
-        updateMyAnswer(result.getSection1(), questionId, selectionId);
-        updateMyAnswer(result.getSection2(), questionId, selectionId);
+        if (result.getCurrentSection().equals("section1")) {
+            updateMyAnswer(result.getSection1(), questionId, selectionId);
+        } else {
+            updateMyAnswer(result.getSection2(), questionId, selectionId);
+        }
+        redisHashService.saveOrUpdateListening(result);
+    }
+
+    public void multipleSelect(Integer questionId, List<Integer> options) {
+        ListeningTest result = redisHashService.getListening();
+        if (result.getCurrentSection().equals("section1")) {
+            updateMyAnswers(result.getSection1(), questionId, options);
+        } else {
+            updateMyAnswers(result.getSection2(), questionId, options);
+        }
         redisHashService.saveOrUpdateListening(result);
     }
 
@@ -161,34 +177,34 @@ public class ListeningService {
                                 Integer questionId,
                                 Integer selectionId) {
         section.forEach(item -> item.getQuestions().stream()
-                .filter(question -> item.getId().equals(questionId))
+                .filter(question -> question.getId().equals(questionId))
                 .findFirst()
                 .ifPresent(question -> question.setMyAnswer(selectionId)));
     }
 
-    public ListeningTest next() {
-        ListeningTest result = redisHashService.getListening();
-        AtomicInteger index = new AtomicInteger(result.getIndex() + 1);
+    private void updateMyAnswers(List<ListeningTest.ListeningDetail> section,
+                                 Integer questionId,
+                                 List<Integer> options) {
+        section.forEach(item -> item.getQuestions().stream()
+                .filter(question -> question.getId().equals(questionId))
+                .findFirst()
+                .ifPresent(question -> question.setMyAnswers(options)));
+    }
 
-        // Check if we need to switch sections
-        if (index.get() > 11 && result.getCurrentSection().equals("section1")) {
-            result.setCurrentSection("section2");
-            index.set(1);
-            result.setRemainTime(60 * 10);
-        }
-        result.setIndex(index.get());
+    private void updateListeningTest(ListeningTest result, String section, int index, int remainTime) {
+        result.setCurrentSection(section);
+        result.setRemainTime(remainTime);
+        result.setIndex(index);
 
-        // Determine the current section list
-        List<ListeningTest.ListeningDetail> section = result.getCurrentSection().equals("section1") ?
-                result.getSection1() : result.getSection2();
-
-        // Find the next question
         AtomicInteger currentListeningId = new AtomicInteger(0);
         AtomicInteger currentQuestionId = new AtomicInteger(0);
 
-        section.stream()
+        List<ListeningTest.ListeningDetail> sectionList = section.equals("section1") ?
+                result.getSection1() : result.getSection2();
+
+        sectionList.stream()
                 .flatMap(detail -> detail.getQuestions().stream()
-                        .filter(question -> question.getIndex().equals(index.get()))
+                        .filter(question -> question.getIndex().equals(index))
                         .map(question -> new AbstractMap.SimpleEntry<>(detail.getId(), question.getId())))
                 .findFirst()
                 .ifPresent(entry -> {
@@ -198,8 +214,28 @@ public class ListeningService {
 
         result.setCurrentListeningId(currentListeningId.get());
         result.setCurrentQuestionId(currentQuestionId.get());
-        result.setTotal(result.getCurrentSection().equals("section1") ? 11 : 17);
+        result.setTotal(section.equals("section1") ? 11 : 17);
         redisHashService.saveOrUpdateListening(result);
+    }
+
+    public ListeningTest next() {
+        ListeningTest result = redisHashService.getListening();
+        AtomicInteger index = new AtomicInteger(result.getIndex() + 1);
+
+        // Check if we need to switch sections
+        if (index.get() > 11 && result.getCurrentSection().equals("section1")) {
+            updateListeningTest(result, "section2", 1, 60 * 10);
+        } else {
+            result.setIndex(index.get());
+            updateListeningTest(result, result.getCurrentSection(), index.get(), result.getRemainTime());
+        }
+
+        return result;
+    }
+
+    public ListeningTest changeSection() {
+        ListeningTest result = redisHashService.getListening();
+        updateListeningTest(result, "section1", 11, 60 * 10);
         return result;
     }
 
@@ -250,16 +286,19 @@ public class ListeningService {
         List<Integer> correctQuestionIds = new ArrayList<>();
         questions.forEach(question -> {
             List<ListeningSelection> multipleSelections = listeningSelectionRepository.findByQuestionId(question.getId());
+            long correctAnswersCount = multipleSelections.stream()
+                    .filter(item -> Boolean.TRUE.equals(item.getIsCorrect()))
+                    .count();
             long count = multipleSelections.stream()
                     .filter(item -> Boolean.TRUE.equals(item.getMyAnswer()) && Boolean.TRUE.equals(item.getIsCorrect()))
                     .count();
             if (question.getType().equals(ListeningQuestion.Type.MULTIPLE_CHOICE)) {
                 totalRawScore.getAndAdd(2);
-                if (count == 2) {
+                if (count == correctAnswersCount) {
                     myRawScore.getAndAdd(2);
                     correctQuestionIds.add(question.getId());
                 }
-                if (count == 1) {
+                if (count == correctAnswersCount - 1) {
                     myRawScore.getAndAdd(1);
                 }
                 return;
@@ -278,8 +317,7 @@ public class ListeningService {
         String path = "";
         switch (type) {
             case "LISTENING":
-//                path = listeningRepository.getReferenceById(id).getPath();
-                path = "/Volumes/Info/TOEFLActualQuestions/2020-2023Listening/2022/Audio/1/1_1.mp3";
+                path = listeningRepository.getReferenceById(id).getPath();
                 break;
             case "QUESTION":
                 path = listeningQuestionRepository.getReferenceById(id).getQuestionPath();
