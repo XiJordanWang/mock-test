@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mock_test.back.listening.model.ListeningTest;
 import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.model.ReadingTest;
+import com.mock_test.back.speaking.model.SpeakingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class RedisHashService {
 
     private final static String READING = "READING";
     private final static String LISTENING = "LISTENING";
+    private final static String SPEAKING = "SPEAKING";
 
     public ReadingTest createReadingTest(List<QuestionDTO> list) {
         String id = UUID.randomUUID().toString();
@@ -68,6 +70,19 @@ public class RedisHashService {
         redisTemplate.opsForHash().putAll(LISTENING, hash);
     }
 
+    public void createSpeakingTest(String id) {
+        SpeakingTest test = new SpeakingTest();
+        test.setId(id);
+        this.saveOrUpdateSpeaking(test);
+        redisTemplate.expire(SPEAKING, 2, TimeUnit.HOURS);
+    }
+
+    public void startSpeakingTest(SpeakingTest dto) {
+        Map<String, Object> hash = objectMapper.convertValue(dto, new TypeReference<>() {
+        });
+        redisTemplate.opsForHash().putAll(SPEAKING, hash);
+    }
+
     public ReadingTest getReading() {
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(READING);
         Map<String, Object> result = new HashMap<>();
@@ -80,6 +95,13 @@ public class RedisHashService {
         Map<String, Object> result = new HashMap<>();
         entries.forEach((key, value) -> result.put(key.toString(), value));
         return objectMapper.convertValue(result, ListeningTest.class);
+    }
+
+    public SpeakingTest getSpeaking() {
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(SPEAKING);
+        Map<String, Object> result = new HashMap<>();
+        entries.forEach((key, value) -> result.put(key.toString(), value));
+        return objectMapper.convertValue(result, SpeakingTest.class);
     }
 
     public void delReading() {
@@ -96,6 +118,12 @@ public class RedisHashService {
         Map<String, Object> hash = objectMapper.convertValue(readingTest, new TypeReference<>() {
         });
         redisTemplate.opsForHash().putAll(LISTENING, hash);
+    }
+
+    public void saveOrUpdateSpeaking(SpeakingTest speakingTest) {
+        Map<String, Object> hash = objectMapper.convertValue(speakingTest, new TypeReference<>() {
+        });
+        redisTemplate.opsForHash().putAll(SPEAKING, hash);
     }
 
     public void delListening() {

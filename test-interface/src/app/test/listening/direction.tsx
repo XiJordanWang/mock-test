@@ -4,9 +4,7 @@ import React from "react";
 const ListeningSectionDirections: React.FC = () => {
   return (
     <div className="p-4 ml-40 mr-40 mt-20 h-screen">
-      <h1 className="text-center text-2xl font-bold mb-8">
-        Listening Section Directions
-      </h1>
+      <h1 className="text-2xl font-bold mb-8">Listening Section Directions</h1>
       <hr className="my-4 border-gray-400" />
       <p className="mb-4">
         In this section, you will be able to demonstrate your ability to

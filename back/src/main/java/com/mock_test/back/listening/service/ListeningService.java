@@ -276,7 +276,8 @@ public class ListeningService {
         testService.saveOrUpdate(test);
 
         listeningRepository.updateIsDoneToTrue(questionIds);
-        redisHashService.delListening();
+        redisHashService.createSpeakingTest(result.getId());
+//        redisHashService.delListening();
     }
 
     private void computeScore(List<Integer> questionIds,
@@ -310,21 +311,5 @@ public class ListeningService {
             totalRawScore.getAndAdd(1);
         });
         listeningQuestionRepository.updateCorrectnessToTrue(correctQuestionIds);
-    }
-
-
-    public String getListeningPath(String type, Integer id) {
-        String path = "";
-        switch (type) {
-            case "LISTENING":
-                path = listeningRepository.getReferenceById(id).getPath();
-                break;
-            case "QUESTION":
-                path = listeningQuestionRepository.getReferenceById(id).getQuestionPath();
-                break;
-            default:
-                break;
-        }
-        return path;
     }
 }

@@ -124,3 +124,26 @@ export interface ListeningSelection {
   id: number;
   information: string;
 }
+
+export interface SpeakingTest {
+  section1Id: number;
+  section2Id: number;
+  section3Id: number;
+  section4Id: number;
+}
+
+export interface SpeakingDetials {
+  id: number;
+  title: string;
+  reading: string;
+  question: string;
+  type: string;
+}
+
+export interface SpeakingDirectionProps {
+  onEnded: () => void;
+}
+
+export interface SectionProps {
+  id: number;
+}
