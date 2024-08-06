@@ -37,6 +37,9 @@ public class FileService {
             case "SPEAKING_QUESTION":
                 path = speakingRepository.getReferenceById(id).getQuestionPath();
                 break;
+            case "SPEAKING_LISTENING":
+                path = speakingRepository.getReferenceById(id).getListeningPath();
+                break;
             default:
                 break;
         }
@@ -47,21 +50,18 @@ public class FileService {
         String uploadDir = "/Volumes/Info/TOEFLActualQuestions/speaking-response/" + id;
         Path uploadPath = Paths.get(uploadDir);
 
-        // 确保目录存在
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // 保存文件到指定目录
         String fileName = file.getOriginalFilename();
         Path filePath = uploadPath.resolve(fileName);
         Files.write(filePath, file.getBytes());
         System.out.println("File saved at: " + filePath.toString());
 
-        // 更新数据库中的response path
         Speaking speaking = speakingRepository.getReferenceById(id);
         speaking.setResponsePath(filePath.toString());
-        speakingRepository.save(speaking);  // 保存更新的实体
+        speakingRepository.save(speaking);
         System.out.println("Response path set to: " + filePath.toString());
     }
 }

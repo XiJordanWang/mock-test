@@ -100,6 +100,7 @@ export interface MiddleProps {
   index: number;
   onSubmit: () => void;
   isPause?: boolean;
+  isHiddenTime?: boolean;
 }
 
 export interface ListeningProps {
@@ -142,8 +143,14 @@ export interface SpeakingDetials {
 
 export interface SpeakingDirectionProps {
   onEnded: () => void;
+  section: number;
 }
 
 export interface SectionProps {
   id: number;
+  section: number;
+  onUploadEnded: () => void;
+  onReading: () => void;
+  showArticle: boolean;
+  isListening: boolean;
 }

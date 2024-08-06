@@ -4,17 +4,28 @@ import { getQuestion, uploadAudio } from "@/api/speakingAPI";
 import CountdownTimer from "./countdownTimer";
 import Recorder from "recorder-js";
 
-export default function Section1({ id }: SectionProps) {
+export default function Section({
+  id,
+  section,
+  onUploadEnded,
+  onReading,
+  showArticle,
+  isListening,
+}: SectionProps) {
   const firstAudioRef = useRef<HTMLAudioElement>(null);
   const secondAudioRef = useRef<HTMLAudioElement>(null);
   const thirdAudioRef = useRef<HTMLAudioElement>(null);
+  const studentsListerRef = useRef<HTMLAudioElement>(null);
   const [speakingDetail, setSpeakingDetail] = useState<SpeakingDetials>();
   const [showElements, setShowElements] = useState(false);
   const [startTimer, setStartTimer] = useState(false);
-  const [time, setTime] = useState<number>(15);
+  const [time, setTime] = useState<number>(0);
   const [timerLabel, setTimerLabel] = useState<string>("PREPARATION TIME");
   const [timerColor, setTimerColor] = useState<string>("#E0E0E0");
   const [recorder, setRecorder] = useState<Recorder | null>(null);
+  const [prepareTime, setPrepareTime] = useState<number>(15);
+  const [responseTime, setResponseTime] = useState<number>(45);
+  const [isBlurred, setIsBlurred] = useState<boolean>(false);
 
   const fetchQuestions = async (id: number) => {
     const data = await getQuestion(id);
@@ -26,9 +37,54 @@ export default function Section1({ id }: SectionProps) {
   }, [id]);
 
   useEffect(() => {
+    if (section === 1) {
+      setPrepareTime(15);
+      setResponseTime(45);
+    } else if (section === 2) {
+      setPrepareTime(30);
+      setResponseTime(60);
+    } else if (section === 3) {
+      setPrepareTime(30);
+      setResponseTime(60);
+    } else if (section === 4) {
+      setPrepareTime(20);
+      setResponseTime(60);
+    }
+  }, [section]);
+
+  useEffect(() => {
+    if (showArticle) {
+      const studentsAudio = studentsListerRef.current;
+
+      if (studentsAudio) {
+        const handleStudentsAudioEnd = () => {
+          onReading();
+          setIsBlurred(false); // Remove blur effect after audio ends
+        };
+
+        setIsBlurred(true); // Apply blur effect
+        studentsAudio.addEventListener("ended", handleStudentsAudioEnd);
+        studentsAudio.play().catch((error) => {
+          console.error("Failed to play students audio:", error);
+        });
+
+        return () => {
+          studentsAudio.removeEventListener("ended", handleStudentsAudioEnd);
+        };
+      }
+    }
+  }, [showArticle]);
+
+  useEffect(() => {
+    if (showArticle) {
+      return;
+    }
+    if (isListening) {
+      return;
+    }
     const firstAudio = firstAudioRef.current;
     const secondAudio = secondAudioRef.current;
-
+    console.log("firstAudio: " + firstAudio);
     if (firstAudio) {
       const handleFirstAudioEnd = () => {
         setShowElements(true);
@@ -49,14 +105,17 @@ export default function Section1({ id }: SectionProps) {
         firstAudio.removeEventListener("ended", handleFirstAudioEnd);
       };
     }
-  }, []);
+  }, [showArticle, isListening]);
 
   useEffect(() => {
+    if (showArticle) {
+      return;
+    }
     const secondAudio = secondAudioRef.current;
 
     if (secondAudio) {
       const handleSecondAudioEnd = () => {
-        setTime(15);
+        setTime(prepareTime);
         setStartTimer(true);
       };
 
@@ -69,9 +128,12 @@ export default function Section1({ id }: SectionProps) {
   }, [showElements]);
 
   const handleTimerEnd = () => {
+    if (showArticle) {
+      return;
+    }
     const thirdAudio = thirdAudioRef.current;
-    if (time === 15) {
-      setTime(45);
+    if (time === prepareTime) {
+      setTime(responseTime);
       setStartTimer(false);
       setTimerLabel("RESPONSE TIME");
       setTimerColor("#0D6B6E");
@@ -118,9 +180,13 @@ export default function Section1({ id }: SectionProps) {
         .stop()
         .then(({ blob }) => {
           console.log("Audio blob:", blob);
-          uploadAudio(blob, id).catch((error) => {
-            console.error("Failed to upload audio:", error);
-          });
+          uploadAudio(blob, id)
+            .then(() => {
+              onUploadEnded();
+            })
+            .catch((error) => {
+              console.error("Failed to upload audio:", error);
+            });
         })
         .catch((error) => {
           console.error("Failed to stop recording:", error);
@@ -141,8 +207,28 @@ export default function Section1({ id }: SectionProps) {
   }, []);
 
   return (
-    <div className="p-4 ml-60 mr-60 mt-20 h-screen">
-      <div className="mt-20 mb-4 font-bold">{speakingDetail?.question}</div>
+    <div
+      className={`p-4 ml-60 mr-60 mt-20 h-screen ${isBlurred ? "blur" : ""}`}
+    >
+      {showArticle && (
+        <>
+          <audio ref={studentsListerRef} src={"/Students Letter.m4a"} />
+          {!isBlurred && (
+            <>
+              <div>Reading Time: 50 seconds</div>
+              <div className="font-bold mt-10 mb-5">
+                {speakingDetail?.title}
+              </div>
+              <div>{speakingDetail?.reading}</div>
+            </>
+          )}
+        </>
+      )}
+      {!showArticle && (
+        <>
+          <div className="mt-20 mb-4 font-bold">{speakingDetail?.question}</div>
+        </>
+      )}
       <audio
         ref={firstAudioRef}
         src={"http://localhost:8080/files/SPEAKING_QUESTION/" + id}
@@ -153,9 +239,11 @@ export default function Section1({ id }: SectionProps) {
         <>
           <hr className="mt-20 mb-10 ml-20 mr-20 my-4 border-gray-400" />
           <div className="text-center font-bold">
-            Preparation Time: 15 Seconds
+            Preparation Time: {prepareTime} Seconds
           </div>
-          <div className="text-center font-bold">Response Time: 45 Seconds</div>
+          <div className="text-center font-bold">
+            Response Time: {responseTime} Seconds
+          </div>
           <CountdownTimer
             duration={time}
             start={startTimer}

@@ -11,6 +11,7 @@ export default function Middle({
   total,
   onSubmit,
   isPause,
+  isHiddenTime,
 }: MiddleProps) {
   // Initial countdown time in seconds (36 minutes)
   const initialTime = remainTime;
@@ -28,6 +29,9 @@ export default function Middle({
 
   useEffect(() => {
     if (isPause) {
+      return;
+    }
+    if (isHiddenTime) {
       return;
     }
     const timer = setInterval(() => {
@@ -71,16 +75,21 @@ export default function Middle({
           </>
         )}
       </div>
-      <div className="flex items-center space-x-2 text-gray-600">
-        {isTimeVisible && <span>{formatTime(timeLeft)}</span>}
-        <button
-          onClick={handleHideTime}
-          className="flex items-center space-x-2 bg-[#0D6B6E] text-white px-2 py-1 rounded-md hover:bg-[#025d5d] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#027f80]"
-        >
-          <EyeIcon className="h-5 w-5" />
-          <span>{isTimeVisible ? "Hide Time" : "Show Time"}</span>
-        </button>
-      </div>
+      {!isHiddenTime && (
+        <>
+          {" "}
+          <div className="flex items-center space-x-2 text-gray-600">
+            {isTimeVisible && <span>{formatTime(timeLeft)}</span>}
+            <button
+              onClick={handleHideTime}
+              className="flex items-center space-x-2 bg-[#0D6B6E] text-white px-2 py-1 rounded-md hover:bg-[#025d5d] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#027f80]"
+            >
+              <EyeIcon className="h-5 w-5" />
+              <span>{isTimeVisible ? "Hide Time" : "Show Time"}</span>
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

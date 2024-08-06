@@ -1,12 +1,21 @@
 /* styles.css */
 .page-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; 
-    overflow: hidden; 
-  }
-  
-  .section-container {
-    flex: 1; 
-    overflow: hidden; 
-  }
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.section-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* speaking.css */
+.blur {
+  filter: blur(5px);
+}
+
+.blur-content {
+  transition: filter 0.5s ease;
+}
