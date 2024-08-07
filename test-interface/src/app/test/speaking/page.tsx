@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Middle from "../middle";
 import Direction from "./direction";
 import Headers from "../header";
-import { start } from "@/api/speakingAPI";
+import { start, submit } from "@/api/speakingAPI";
 import { SpeakingTest } from "../interface";
 import Section from "./section";
 import "./speaking.css";
@@ -59,19 +59,20 @@ export default function Page() {
     } else if (section === 4) {
       setSectionId(testData?.section4Id ? testData?.section4Id : 0);
     }
-  }, [section]);
+  }, [section]); // eslint-disable-line
 
   const handdleUploadEnded = () => {
     setShowModal(true);
   };
 
   const handdleNextSection = () => {
-    setIsDerection(true);
-    setIsSection(false);
     if (section === 4) {
       router.push("/test/writing");
+      submit();
       return;
     }
+    setIsDerection(true);
+    setIsSection(false);
     setSection((pre) => pre + 1);
   };
 

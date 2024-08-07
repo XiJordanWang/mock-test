@@ -42,4 +42,22 @@ public class Test {
 
     @Column(name = "listening_score")
     private Integer listeningScore;
+
+    @Column(name = "speaking_ids")
+    private List<Integer> speakingIds;
+
+    @Column(name = "speaking_score")
+    private Integer speakingScore;
+
+    @Column(name = "writing_ids")
+    private List<Integer> writingIds;
+
+    @Column(name = "writing_raw_scores")
+    private String writingRawScores;
+
+    @Column(name = "writing_score")
+    private Integer writingScore;
+
+    @Column(name = "overall_score")
+    private Integer overallScore;
 }

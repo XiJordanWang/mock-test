@@ -22,4 +22,9 @@ public class SpeakingController {
     public Speaking getById(@PathVariable("id") Integer id) {
         return speakingService.getById(id);
     }
+
+    @PatchMapping("/submit")
+    public void submit() {
+        speakingService.submit();
+    }
 }

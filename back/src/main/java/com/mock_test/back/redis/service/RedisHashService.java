@@ -6,6 +6,7 @@ import com.mock_test.back.listening.model.ListeningTest;
 import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.model.ReadingTest;
 import com.mock_test.back.speaking.model.SpeakingTest;
+import com.mock_test.back.writing.model.WritingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class RedisHashService {
     private final static String READING = "READING";
     private final static String LISTENING = "LISTENING";
     private final static String SPEAKING = "SPEAKING";
+    private final static String WRITING = "WRITING";
 
     public ReadingTest createReadingTest(List<QuestionDTO> list) {
         String id = UUID.randomUUID().toString();
@@ -77,10 +79,11 @@ public class RedisHashService {
         redisTemplate.expire(SPEAKING, 2, TimeUnit.HOURS);
     }
 
-    public void startSpeakingTest(SpeakingTest dto) {
-        Map<String, Object> hash = objectMapper.convertValue(dto, new TypeReference<>() {
-        });
-        redisTemplate.opsForHash().putAll(SPEAKING, hash);
+    public void createWritingTest(String id) {
+        WritingTest test = new WritingTest();
+        test.setId(id);
+        this.saveOrUpdateWriting(test);
+        redisTemplate.expire(SPEAKING, 2, TimeUnit.HOURS);
     }
 
     public ReadingTest getReading() {
@@ -126,7 +129,17 @@ public class RedisHashService {
         redisTemplate.opsForHash().putAll(SPEAKING, hash);
     }
 
+    public void saveOrUpdateWriting(WritingTest writingTest) {
+        Map<String, Object> hash = objectMapper.convertValue(writingTest, new TypeReference<>() {
+        });
+        redisTemplate.opsForHash().putAll(WRITING, hash);
+    }
+
     public void delListening() {
         redisTemplate.delete(LISTENING);
+    }
+
+    public void delSpeaking() {
+        redisTemplate.delete(SPEAKING);
     }
 }

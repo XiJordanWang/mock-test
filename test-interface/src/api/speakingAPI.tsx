@@ -16,17 +16,17 @@ export const uploadAudio = async (audioBlob: Blob, id: number) => {
   formData.append("file", audioBlob, "recording.mp3");
 
   try {
-    const response = await axios.post(
-      `/files/upload/${id}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.post(`/files/upload/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     console.log("Upload successful:", response.data);
   } catch (error) {
     console.error("Failed to upload audio:", error);
   }
+};
+
+export const submit = async () => {
+  await axios.patch("/speaking/submit");
 };

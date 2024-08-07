@@ -1,7 +1,6 @@
 package com.mock_test.back.file.controller;
 
 import com.mock_test.back.file.service.FileService;
-import com.mock_test.back.listening.service.ListeningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

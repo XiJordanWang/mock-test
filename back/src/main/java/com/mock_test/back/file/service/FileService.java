@@ -1,14 +1,12 @@
 package com.mock_test.back.file.service;
 
 import com.mock_test.back.listening.repository.ListeningQuestionRepository;
+import com.mock_test.back.listening.repository.ListeningRepository;
 import com.mock_test.back.speaking.model.Speaking;
 import com.mock_test.back.speaking.repository.SpeakingRepository;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.apache.commons.exec.CommandLine;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +15,9 @@ import java.nio.file.Paths;
 
 @Service
 public class FileService {
+
+    @Autowired
+    ListeningRepository listeningRepository;
 
     @Autowired
     ListeningQuestionRepository listeningQuestionRepository;
@@ -28,8 +29,7 @@ public class FileService {
         String path = "";
         switch (type) {
             case "LISTENING":
-//                path = listeningRepository.getReferenceById(id).getPath();
-                path = "/Volumes/Info/TOEFLActualQuestions/2020-2023Listening/2022/Audio/1/1_1.mp3";
+                path = listeningRepository.getReferenceById(id).getPath();
                 break;
             case "QUESTION":
                 path = listeningQuestionRepository.getReferenceById(id).getQuestionPath();

@@ -277,7 +277,7 @@ public class ListeningService {
 
         listeningRepository.updateIsDoneToTrue(questionIds);
         redisHashService.createSpeakingTest(result.getId());
-//        redisHashService.delListening();
+        redisHashService.delListening();
     }
 
     private void computeScore(List<Integer> questionIds,

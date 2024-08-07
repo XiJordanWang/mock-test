@@ -38,15 +38,19 @@ export default function Section({
 
   useEffect(() => {
     if (section === 1) {
+      setTime(15);
       setPrepareTime(15);
       setResponseTime(45);
     } else if (section === 2) {
+      setTime(30);
       setPrepareTime(30);
       setResponseTime(60);
     } else if (section === 3) {
+      setTime(30);
       setPrepareTime(30);
       setResponseTime(60);
     } else if (section === 4) {
+      setTime(20);
       setPrepareTime(20);
       setResponseTime(60);
     }
@@ -73,7 +77,7 @@ export default function Section({
         };
       }
     }
-  }, [showArticle]);
+  }, [showArticle]); // eslint-disable-line
 
   useEffect(() => {
     if (showArticle) {
@@ -84,7 +88,6 @@ export default function Section({
     }
     const firstAudio = firstAudioRef.current;
     const secondAudio = secondAudioRef.current;
-    console.log("firstAudio: " + firstAudio);
     if (firstAudio) {
       const handleFirstAudioEnd = () => {
         setShowElements(true);
@@ -125,7 +128,7 @@ export default function Section({
         secondAudio.removeEventListener("ended", handleSecondAudioEnd);
       };
     }
-  }, [showElements]);
+  }, [showElements]); // eslint-disable-line
 
   const handleTimerEnd = () => {
     if (showArticle) {
@@ -204,7 +207,7 @@ export default function Section({
         thirdAudio.removeEventListener("ended", handleThirdAudioEnd);
       };
     }
-  }, []);
+  }, []); // eslint-disable-line
 
   return (
     <div
