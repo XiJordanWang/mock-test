@@ -192,7 +192,7 @@ public class ArticlesService {
                     .correctAnswer(questionDTO.getCorrectAnswer())
                     .build();
 
-            context.set(this.modifyDom(question, context.get()));
+            context.set(this.modifyDom(question, context.get(), dto.getHighlightSentence()));
 
             questionRepository.save(question);
 
@@ -377,7 +377,7 @@ public class ArticlesService {
         return type;
     }
 
-    private String modifyDom(Question question, String context) {
+    private String modifyDom(Question question, String context, String highlightSentence) {
         if (question.getType().equals(Question.Type.VOCABULARY)) {
             return ParseHTML.recognizeVocabulary(context, ParseHTML.extractWord(question.getQuestion()), question.getSequence());
         }
@@ -385,7 +385,7 @@ public class ArticlesService {
             return ParseHTML.recognizeRefer(context, ParseHTML.extractWord(question.getQuestion()), question.getSequence());
         }
         if (question.getType().equals(Question.Type.SENTENCE)) {
-            return ParseHTML.recognizeSentence(context, ParseHTML.extractWord(question.getQuestion()), question.getSequence());
+            return ParseHTML.recognizeSentence(context, highlightSentence, question.getSequence());
         }
         return context;
     }

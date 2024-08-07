@@ -181,3 +181,12 @@ export interface Writing {
   studentB: string;
   type: string;
 }
+
+export interface TestResult {
+  reading: number;         // Reading score, which is a number
+  listening: number;       // Listening score, which is a number
+  speaking: number;        // Speaking score, which is a number
+  writing: number | null;  // Writing score, which can be a number or null
+  overall: number;         // Overall score, which is a number
+  startDate: string;       // Start date in "MM/DD/YYYY" format, which is a string
+}

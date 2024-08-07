@@ -10,6 +10,7 @@ public class AddReadingDTO {
     private String heading;
     private String context;
     private List<QuestionDTO> questions;
+    private String highlightSentence;
 
 
     @Data
