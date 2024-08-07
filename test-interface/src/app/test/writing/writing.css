@@ -1,0 +1,17 @@
+/* styles.css */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.section-container {
+    flex: 1;
+    overflow: hidden;
+}
+
+.reading {
+    margin: 1rem;
+    font-size: 20px;
+}

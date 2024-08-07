@@ -4,6 +4,7 @@ import com.mock_test.back.listening.repository.ListeningQuestionRepository;
 import com.mock_test.back.listening.repository.ListeningRepository;
 import com.mock_test.back.speaking.model.Speaking;
 import com.mock_test.back.speaking.repository.SpeakingRepository;
+import com.mock_test.back.writing.servicei.WritingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,9 @@ public class FileService {
     @Autowired
     SpeakingRepository speakingRepository;
 
+    @Autowired
+    WritingService writingService;
+
     public String getListeningPath(String type, Integer id) {
         String path = "";
         switch (type) {
@@ -39,6 +43,9 @@ public class FileService {
                 break;
             case "SPEAKING_LISTENING":
                 path = speakingRepository.getReferenceById(id).getListeningPath();
+                break;
+            case "INTEGRATED_WRITING":
+                path = writingService.getReferenceById(id).getListeningPath();
                 break;
             default:
                 break;

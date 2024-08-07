@@ -29,7 +29,7 @@ const CountdownTimer = ({
     } else if (start && timeLeft === 0) {
       onTimerEnd();
     }
-  }, [start, timeLeft]);
+  }, [start, timeLeft]); // eslint-disable-line
 
   const formatTime = (seconds: number) => {
     const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
@@ -70,7 +70,9 @@ const CountdownTimer = ({
           </svg>
           <FaMicrophoneSlash className="text-gray-700" size="16" />
         </div>
-        <div className="ml-3 pb-2 text-xl font-bold">{formatTime(timeLeft)}</div>
+        <div className="ml-3 pb-2 text-xl font-bold">
+          {formatTime(timeLeft)}
+        </div>
       </div>
     </div>
   );

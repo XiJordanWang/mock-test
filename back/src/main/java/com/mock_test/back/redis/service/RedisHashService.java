@@ -6,6 +6,7 @@ import com.mock_test.back.listening.model.ListeningTest;
 import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.model.ReadingTest;
 import com.mock_test.back.speaking.model.SpeakingTest;
+import com.mock_test.back.writing.model.Writing;
 import com.mock_test.back.writing.model.WritingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -107,6 +108,13 @@ public class RedisHashService {
         return objectMapper.convertValue(result, SpeakingTest.class);
     }
 
+    public WritingTest getWriting() {
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(WRITING);
+        Map<String, Object> result = new HashMap<>();
+        entries.forEach((key, value) -> result.put(key.toString(), value));
+        return objectMapper.convertValue(result, WritingTest.class);
+    }
+
     public void delReading() {
         redisTemplate.delete(READING);
     }
@@ -141,5 +149,9 @@ public class RedisHashService {
 
     public void delSpeaking() {
         redisTemplate.delete(SPEAKING);
+    }
+
+    public void delWriting() {
+        redisTemplate.delete(WRITING);
     }
 }

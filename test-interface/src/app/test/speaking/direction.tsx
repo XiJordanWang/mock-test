@@ -26,7 +26,7 @@ export default function Direction({
         audio.removeEventListener("ended", handleEnd);
       };
     }
-  }, []);
+  }, []); // eslint-disable-line
 
   return (
     <div className="p-4 ml-40 mr-40 mt-20 h-screen">

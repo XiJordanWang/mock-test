@@ -73,6 +73,7 @@ export interface HeaderProps {
   onReturn?: () => void;
   onBegin?: () => void;
   onBackToQuestion?: () => void;
+  onCountinue?: () => void;
   buttons: string;
   isReview?: boolean;
 }
@@ -153,4 +154,30 @@ export interface SectionProps {
   onReading: () => void;
   showArticle: boolean;
   isListening: boolean;
+}
+
+export interface IntegratedWritingProps {
+  isDisable: boolean;
+  id: number;
+  onTextChange: (text: string) => void;
+}
+
+export interface AcademicDiscussionProps {
+  id: number;
+  onTextChange: (text: string) => void;
+}
+
+export interface WritingTest {
+  integratedId: number;
+  discussionId: number;
+}
+
+export interface Writing {
+  id: number;
+  reading: string;
+  question: string;
+  professorQuestion: string;
+  studentA: string;
+  studentB: string;
+  type: string;
 }

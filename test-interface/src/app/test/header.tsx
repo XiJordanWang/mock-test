@@ -60,6 +60,26 @@ const listeningQuestionButtons = [
 
 const listeningButtons = [{ name: "Volume", icon: SpeakerWaveIcon }];
 
+const wrtingDirectionButtons = [
+  {
+    name: "Countinue",
+    icon: ArrowRightIcon,
+    backgroundColor: "white",
+    textColor: "text-[#027f80]",
+  },
+];
+
+const writingButtons = [
+  { name: "Volume", icon: SpeakerWaveIcon },
+  { name: "Help", icon: QuestionMarkCircleIcon },
+  {
+    name: "Next",
+    icon: ArrowRightIcon,
+    backgroundColor: "white",
+    textColor: "text-[#027f80]",
+  },
+];
+
 export default function Header({
   onNext,
   onBack,
@@ -67,6 +87,7 @@ export default function Header({
   onReturn,
   onBackToQuestion,
   onBegin,
+  onCountinue,
   buttons,
 }: HeaderProps) {
   const renderButtons = (buttonsArray: Button[]) => {
@@ -87,6 +108,8 @@ export default function Header({
             ? onBackToQuestion
             : button.name === "Begin"
             ? onBegin
+            : button.name === "Countinue"
+            ? onCountinue
             : undefined
         } // Call onBack for Back button and onNext for Next button
         className={classNames(
@@ -117,6 +140,10 @@ export default function Header({
     buttonsToRender = renderButtons(listeningButtons);
   } else if (buttons === "ListeningQuestions") {
     buttonsToRender = renderButtons(listeningQuestionButtons);
+  } else if (buttons === "WritingDirection") {
+    buttonsToRender = renderButtons(wrtingDirectionButtons);
+  } else if (buttons === "Writing") {
+    buttonsToRender = renderButtons(writingButtons);
   }
 
   return (
