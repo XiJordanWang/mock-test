@@ -18,4 +18,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     void updateCorrectnessInIds(@Param("ids") List<Integer> ids);
 
     List<Question> findByArticleIdOrderBySequenceAsc(Integer articleId);
+
+    List<Question> findByArticleIdInOrderByArticleIdAscSequenceAsc(List<Integer> articleIds);
 }

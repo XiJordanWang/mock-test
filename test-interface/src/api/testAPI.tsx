@@ -1,5 +1,6 @@
 import { TestResult } from "@/app/test/interface";
 import axios from "./axiosConfig";
+import { PaginatedTestResults } from "@/app/review/interface";
 
 export const getLast = async () => {
   const response = await axios.get<TestResult>("/test/last");
@@ -8,6 +9,16 @@ export const getLast = async () => {
 
 export const getAverage = async () => {
   const response = await axios.get<TestResult>("/test/average");
+  return response.data;
+};
+
+export const getPaginatedTests = async (
+  page: number,
+  size: number
+): Promise<PaginatedTestResults> => {
+  const response = await axios.get<PaginatedTestResults>(
+    `/test?page=${page}&size=${size}`
+  );
   return response.data;
 };
 

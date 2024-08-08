@@ -1,5 +1,6 @@
 import { ApiResponse, ReadingTest } from "@/app/test/interface";
 import axios from "./axiosConfig";
+import { QuestionListDTO, ReadingReviewDTO } from "@/app/review/interface";
 
 export const start = async () => {
   const response = await axios.post<ReadingTest>("/reading/start");
@@ -26,6 +27,21 @@ export const backQuestion = async (index: number) => {
 
 export const backToQuestion = async (index: number) => {
   const response = await axios.get<ReadingTest>(`/reading/question/${index}`);
+  return response.data;
+};
+
+export const getQuestions = async (articleIds: number[]) => {
+  const ids = articleIds.join(",");
+  const response = await axios.get<QuestionListDTO[]>(
+    `/reading/questions?articleIds=${ids}`
+  );
+  return response.data;
+};
+
+export const reviewQuestion = async (id: number) => {
+  const response = await axios.get<ReadingReviewDTO>(
+    `/reading/review/${id}`
+  );
   return response.data;
 };
 

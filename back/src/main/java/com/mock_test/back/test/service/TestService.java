@@ -2,19 +2,25 @@ package com.mock_test.back.test.service;
 
 import com.mock_test.back.reading.dto.GradeReadingDTO;
 import com.mock_test.back.test.dto.DashboardDTO;
+import com.mock_test.back.test.dto.TestDTO;
 import com.mock_test.back.test.model.Test;
 import com.mock_test.back.test.repository.TestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class TestService {
 
     @Autowired
     TestRepository testRepository;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public Test findByUUID(String uuid) {
         return testRepository.findByUuid(uuid);
@@ -64,6 +70,35 @@ public class TestService {
         dto.setSpeaking((int) Math.round(averages.get("avgSpeakingScore")));
         dto.setWriting((int) Math.round(averages.get("avgWritingScore") != null ? averages.get("avgWritingScore") : 0));
         dto.setOverall((int) Math.round(averages.get("avgOverallScore")));
+        return dto;
+    }
+
+    public Page<TestDTO> findPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("startTime")));
+        Page<Test> testPage = testRepository.findAll(pageable);
+
+        // Convert the Page<Test> to Page<TestDTO>
+        List<TestDTO> testDTOs = testPage.getContent().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(testDTOs, pageable, testPage.getTotalElements());
+    }
+
+    private TestDTO convertToDTO(Test test) {
+        TestDTO dto = new TestDTO();
+        dto.setId(test.getId());
+        dto.setUuid(test.getUuid());
+        dto.setStartTime(test.getStartTime().format(DATE_FORMATTER)); // Format the date
+        dto.setOverallScore(test.getOverallScore());
+        dto.setReadingScore(test.getReadingScore());
+        dto.setReadingIds(test.getReadingArticleIds());
+        dto.setListeningScore(test.getListeningScore());
+        dto.setListeningIds(test.getListeningIds());
+        dto.setSpeakingScore(test.getSpeakingScore());
+        dto.setSpeakingIds(test.getSpeakingIds());
+        dto.setWritingScore(test.getWritingScore());
+        dto.setWritingIds(test.getWritingIds());
         return dto;
     }
 }

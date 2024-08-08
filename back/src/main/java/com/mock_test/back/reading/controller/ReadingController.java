@@ -1,7 +1,9 @@
 package com.mock_test.back.reading.controller;
 
 import com.mock_test.back.reading.dto.AddReadingDTO;
+import com.mock_test.back.reading.dto.QuestionListDTO;
 import com.mock_test.back.reading.dto.ReadingDTO;
+import com.mock_test.back.reading.dto.ReadingReviewDTO;
 import com.mock_test.back.reading.model.ReadingTest;
 import com.mock_test.back.reading.service.ArticlesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +67,15 @@ public class ReadingController {
     @PatchMapping("/select/{index}")
     void multipleSelect(@PathVariable("index") Integer index, @RequestBody List<Integer> options) {
         articlesService.multipleSelect(index, options);
+    }
+
+    @GetMapping("/questions")
+    List<QuestionListDTO> getQuestions(@RequestParam List<Integer> articleIds) {
+        return articlesService.getQuestions(articleIds);
+    }
+
+    @GetMapping("/review/{questionId}")
+    ReadingReviewDTO reviewReading(@PathVariable("questionId") Integer questionId) {
+        return articlesService.reviewReading(questionId);
     }
 }

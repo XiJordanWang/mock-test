@@ -1,9 +1,6 @@
 package com.mock_test.back.reading.service;
 
-import com.mock_test.back.reading.dto.AddReadingDTO;
-import com.mock_test.back.reading.dto.GradeReadingDTO;
-import com.mock_test.back.reading.dto.QuestionDTO;
-import com.mock_test.back.reading.dto.ReadingDTO;
+import com.mock_test.back.reading.dto.*;
 import com.mock_test.back.reading.model.Article;
 import com.mock_test.back.reading.model.Question;
 import com.mock_test.back.reading.model.ReadingTest;
@@ -403,5 +400,49 @@ public class ArticlesService {
         long remainTime = (36 * 60) - Duration.between(LocalDateTime.parse(result.getStartTime()),
                 LocalDateTime.now()).getSeconds();
         result.setRemainTime(remainTime);
+    }
+
+    public List<QuestionListDTO> getQuestions(List<Integer> articleIds) {
+        return questionRepository.findByArticleIdInOrderByArticleIdAscSequenceAsc(articleIds).stream()
+                .map(item -> new QuestionListDTO(item.getId(), item.getArticleId(), item.getCorrectness()))
+                .toList();
+    }
+
+    public ReadingReviewDTO reviewReading(Integer questionId) {
+        Question question = questionRepository.getReferenceById(questionId);
+        Article article = articlesRepository.getReferenceById(question.getArticleId());
+        List<Selection> selections = selectionRepository.findByQuestionId(questionId);
+
+        // Convert selections to SelectionDTO
+        List<ReadingReviewDTO.SelectionDTO> selectionDTOs = selections.stream()
+                .map(selection -> {
+                    ReadingReviewDTO.SelectionDTO selectionDTO = new ReadingReviewDTO.SelectionDTO();
+                    selectionDTO.setId(selection.getId());
+                    selectionDTO.setInformation(selection.getInformation());
+                    selectionDTO.setMyAnswer(selection.getMyAnswer());
+                    selectionDTO.setCorrectness(selection.getIsCorrect());
+                    selectionDTO.setIndex(selection.getOption().equals(Selection.Option.A) ? 1 :
+                            selection.getOption().equals(Selection.Option.B) ? 2 : selection.getOption().equals(Selection.Option.C) ? 3 : 4);
+                    return selectionDTO;
+                })
+                .collect(Collectors.toList());
+
+        return getReadingReviewDTO(article, question, selectionDTOs);
+    }
+
+    private static ReadingReviewDTO getReadingReviewDTO(Article article,
+                                                        Question question,
+                                                        List<ReadingReviewDTO.SelectionDTO> selectionDTOs) {
+        ReadingReviewDTO readingReviewDTO = new ReadingReviewDTO();
+        readingReviewDTO.setId(article.getId());
+        readingReviewDTO.setHeading(article.getHeading());
+        readingReviewDTO.setContext(article.getContext());
+        readingReviewDTO.setQuestionId(question.getId());
+        readingReviewDTO.setParagraphNum(question.getParagraphNum());
+        readingReviewDTO.setQuestion(question.getQuestion());
+        readingReviewDTO.setType(question.getType());
+        readingReviewDTO.setSequence(question.getSequence());
+        readingReviewDTO.setSelections(selectionDTOs);
+        return readingReviewDTO;
     }
 }

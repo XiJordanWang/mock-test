@@ -2,9 +2,10 @@
 
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Disclosure } from "@headlessui/react";
+import { useState } from "react";
 
-const navigation = [
-  { name: "Dashboard", href: "#", current: true },
+const initialNavigation = [
+  { name: "Dashboard", href: "/", current: true },
   { name: "Test", href: "test", current: false },
   { name: "Review", href: "review", current: false },
   { name: "Glossary", href: "#", current: false },
@@ -15,6 +16,19 @@ function classNames(...classes: (string | undefined)[]): string {
 }
 
 export default function Header() {
+  const [navigation, setNavigation] = useState(initialNavigation);
+
+  const handleNavigationClick = (name: string) => {
+    console.log('Navigation clicked:', name); // Debugging output
+    setNavigation((prevNavigation) =>
+      prevNavigation.map((item) =>
+        item.name === name
+          ? { ...item, current: true }
+          : { ...item, current: false }
+      )
+    );
+  };
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -35,6 +49,7 @@ export default function Header() {
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "rounded-md px-3 py-2 text-sm font-medium"
                         )}
+                        onClick={() => handleNavigationClick(item.name)}
                       >
                         {item.name}
                       </a>
@@ -50,8 +65,12 @@ export default function Header() {
                   aria-label="Toggle mobile menu"
                 >
                   <span className="sr-only">Open main menu</span>
-                  <Bars3Icon className={`h-6 w-6 ${open ? 'hidden' : 'block'}`} />
-                  <XMarkIcon className={`h-6 w-6 ${open ? 'block' : 'hidden'}`} />
+                  <Bars3Icon
+                    className={`h-6 w-6 ${open ? "hidden" : "block"}`}
+                  />
+                  <XMarkIcon
+                    className={`h-6 w-6 ${open ? "block" : "hidden"}`}
+                  />
                 </button>
               </div>
             </div>
@@ -72,6 +91,7 @@ export default function Header() {
                         : "text-gray-300 hover:bg-gray-700 hover:text-white",
                       "block rounded-md px-3 py-2 text-base font-medium"
                     )}
+                    onClick={() => handleNavigationClick(item.name)}
                   >
                     {item.name}
                   </a>

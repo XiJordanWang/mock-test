@@ -38,8 +38,10 @@ public class RedisListService {
                 new Task(7, "Analyze Mock Test Questions", false),
                 new Task(8, "Listen to Podcasts", false)
         );
-
-        saveTasks(tasks);
+        List<Task> existTask = getTasks();
+        if (existTask == null || existTask.isEmpty()) {
+            saveTasks(tasks);
+        }
     }
 
     public List<Task> getTasks() {
