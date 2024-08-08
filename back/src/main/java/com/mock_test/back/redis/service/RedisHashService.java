@@ -6,7 +6,6 @@ import com.mock_test.back.listening.model.ListeningTest;
 import com.mock_test.back.reading.dto.QuestionDTO;
 import com.mock_test.back.reading.model.ReadingTest;
 import com.mock_test.back.speaking.model.SpeakingTest;
-import com.mock_test.back.writing.model.Writing;
 import com.mock_test.back.writing.model.WritingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
