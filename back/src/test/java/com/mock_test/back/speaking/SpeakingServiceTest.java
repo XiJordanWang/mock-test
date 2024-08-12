@@ -23,6 +23,7 @@ class SpeakingServiceTest {
                                 "good idea? Explain why you agree or disagree with people using such methods to change\n" +
                                 "how they look. Support your opinion with details.")
                         .type(Speaking.Type.SECTION1)
+                        .isDone(false)
                         .questionPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/402/question.mp3")
                         .build(),
                 Speaking.builder()
@@ -37,6 +38,7 @@ class SpeakingServiceTest {
                                 "plan. Then state her opinion about the plan and explain the reasons she gives for holding that\n" +
                                 "opinion.")
                         .type(Speaking.Type.SECTION2)
+                        .isDone(false)
                         .questionPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/403/question.mp3")
                         .listeningPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/403/listening.mp3")
                         .build(),
@@ -52,11 +54,14 @@ class SpeakingServiceTest {
                                 "can purchase them soon after seeing the advertisements.")
                         .question("Explain how the example from the professor's lecture illustrates the concept of ambient advertising.")
                         .type(Speaking.Type.SECTION3)
+                        .isDone(false)
                         .questionPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/404/question.mp3")
-                        .questionPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/404/listening.mp3")
-                        .build(), Speaking.builder()
+                        .listeningPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/404/listening.mp3")
+                        .build(),
+                Speaking.builder()
                         .question("Using points and examples from the lecture, explain why and how marine mammals herd fish.")
                         .type(Speaking.Type.SECTION4)
+                        .isDone(false)
                         .questionPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/405/question.mp3")
                         .listeningPath("/Volumes/Info/TOEFLActualQuestions/2020-2023Speaking/2020/Audio/405/listening.mp3")
                         .build()));

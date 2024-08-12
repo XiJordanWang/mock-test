@@ -9,6 +9,7 @@ import com.mock_test.back.reading.repository.ArticlesRepository;
 import com.mock_test.back.reading.repository.QuestionRepository;
 import com.mock_test.back.reading.repository.SelectionRepository;
 import com.mock_test.back.redis.service.RedisHashService;
+import com.mock_test.back.test.model.Test;
 import com.mock_test.back.test.service.TestService;
 import com.mock_test.back.util.ParseHTML;
 import jakarta.transaction.Transactional;
@@ -177,12 +178,17 @@ public class ArticlesService {
 
         AtomicInteger paragraphNum = new AtomicInteger(1);
         dto.getQuestions().forEach(questionDTO -> {
-            int currentParagraphNum = this.getParagraphNum(paragraphNum.get(), questionDTO);
-            paragraphNum.set(currentParagraphNum);
+            if (questionDTO.getParagraphNum() != null) {
+                paragraphNum.set(questionDTO.getParagraphNum());
+            } else {
+                int currentParagraphNum = this.getParagraphNum(paragraphNum.get(), questionDTO);
+                paragraphNum.set(currentParagraphNum);
+            }
+
 
             Question question = Question.builder()
                     .articleId(article.getId())
-                    .paragraphNum(this.getParagraphNum(currentParagraphNum, questionDTO))
+                    .paragraphNum(this.getParagraphNum(paragraphNum.get(), questionDTO))
                     .question(StringUtils.capitalize(questionDTO.getQuestion()))
                     .sequence(questionDTO.getSequence())
                     .type(this.checkQuestionType(questionDTO))
@@ -236,13 +242,16 @@ public class ArticlesService {
 
         this.computeScore(questions, ids, correct, total);
 
-        testService.saveReading(GradeReadingDTO.builder()
-                .uuid(result.getId())
-                .startTime(LocalDateTime.parse(result.getStartTime()))
-                .readingArticleIds(articleIds)
-                .readingScale(correct.get() + "/" + total.get())
-                .readingScore((int) Math.round(((double) correct.get() / total.get()) * 30))
-                .build());
+        Test test = testService.findByUUID(result.getId());
+        if (test == null) {
+            testService.saveReading(GradeReadingDTO.builder()
+                    .uuid(result.getId())
+                    .startTime(LocalDateTime.parse(result.getStartTime()))
+                    .readingArticleIds(articleIds)
+                    .readingScale(correct.get() + "/" + total.get())
+                    .readingScore((int) Math.round(((double) correct.get() / total.get()) * 30))
+                    .build());
+        }
         questionRepository.saveAll(questions);
 
         articlesRepository.updateIsDoneToTrue(articleIds);

@@ -82,6 +82,7 @@ export default function Direction({
           <audio ref={audioRef} src="/Direction4.m4a" autoPlay />
         </>
       )}
+      <button onClick={onEnded}>da</button>
     </div>
   );
 }

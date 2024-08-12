@@ -18,6 +18,7 @@ public class AddReadingDTO {
         private String question;
         private Integer sequence;
         private String correctAnswer;
+        private Integer paragraphNum;
         private List<SelectionDTO> selections;
     }
 

@@ -9,15 +9,12 @@ import com.mock_test.back.listening.model.ListeningSelection;
 import com.mock_test.back.listening.repository.ListeningQuestionRepository;
 import com.mock_test.back.listening.repository.ListeningRepository;
 import com.mock_test.back.listening.repository.ListeningSelectionRepository;
-import com.mock_test.back.reading.dto.GradeReadingDTO;
 import com.mock_test.back.redis.service.RedisHashService;
 import com.mock_test.back.test.model.Test;
 import com.mock_test.back.test.service.TestService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -280,9 +277,9 @@ public class ListeningService {
         redisHashService.delListening();
     }
 
-    private void computeScore(List<Integer> questionIds,
-                              AtomicInteger myRawScore,
-                              AtomicInteger totalRawScore) {
+    public void computeScore(List<Integer> questionIds,
+                             AtomicInteger myRawScore,
+                             AtomicInteger totalRawScore) {
         List<ListeningQuestion> questions = listeningQuestionRepository.findAllById(questionIds);
         List<Integer> correctQuestionIds = new ArrayList<>();
         questions.forEach(question -> {
